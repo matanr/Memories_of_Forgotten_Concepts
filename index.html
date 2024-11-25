@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="description"
+        content="Memories of Forgotten Concepts">
+  <meta name="keywords" content="Diffusion models concept erasure">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- Google tag (gtag.js) add the  https://www.googletagmanager.com/gtag/js?id=<something> in src below-->
+<script async src=""></script>
+
+<!--<script>-->
+<!--  window.dataLayer = window.dataLayer || [];-->
+<!--  function gtag(){dataLayer.push(arguments);}-->
+<!--  gtag('js', new Date());-->
+
+<!--  gtag('config', 'G-J45NMQRWYL');-->
+<!--</script>-->
+
+  <title>Memories of Forgotten Concepts</title>
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
+        rel="stylesheet">
+
+  <link rel="stylesheet" href="./project_page_data/css/bulma.min.css">
+  <link rel="stylesheet" href="./project_page_data/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="./project_page_data/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="./project_page_data/css/fontawesome.all.min.css">
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./project_page_data/css/index.css">
+  <link rel="icon" href="./project_page_data/images/logo.svg">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="./project_page_data/js/fontawesome.all.min.js"></script>
+  <script src="./project_page_data/js/bulma-carousel.min.js"></script>
+  <script src="./project_page_data/js/bulma-slider.min.js"></script>
+  <script src="./project_page_data/js/index.js"></script>
+  <script type="text/javascript" async
+          src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+  </script>
+</head>
+<body>
+
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+           <img src="./project_page_data/images/uni.svg" class="is-responsive">
+          <h1 class="title is-1 publication-title">Memories of Forgotten Concepts</h1>
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">
+              <a href="https://scholar.google.com/citations?user=5TS4vucAAAAJ&hl=en&oi=ao">Matan Rusanovsky </a><sup>1</sup>,</span>
+            <span class="author-block">
+              <a href="https://www.malnick.net">Shimon Malnick </a><sup>1</sup>,</span>
+            <span class="author-block">
+              <a href="https://scholar.google.com/citations?hl=en&user=czm6bkUAAAAJ">Amir Jevnisek </a><sup>1</sup>,</span>
+            <span class="author-block">
+              <a href="https://www.ohadf.com">Ohad Fried</a><sup>2</sup>
+            </span>
+            <span class="author-block">
+              <a href="http://www.eng.tau.ac.il/~avidan/">Shai Avidan</a><sup>1</sup>,</span>
+
+          </div>
+
+          <div class="is-size-5 publication-authors">
+            <span class="author-block"><sup>1</sup>Tel Aviv University,</span>
+            <span class="author-block"><sup>2</sup>Reichman University</span>
+          </div>
+
+          <div class="column has-text-centered">
+            <div class="publication-links">
+              <!-- PDF Link. -->
+              <span class="link-block">
+                <!-- Add link to arxiv pdf here -->
+                <a href=""
+                   target="_blank"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fas fa-file-pdf"></i>
+                  </span>
+                  <span>Arxiv</span>
+                </a>
+              </span>
+
+              <span class="link-block">
+                <!-- Add link to code on github here -->
+                <a href=""
+                   target="_blank"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fab fa-github"></i>
+                  </span>
+                  <span>Code</span>
+                  </a>
+              </span>
+
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+
+  <div class="container is-max-desktop">
+   
+    <div class="columns is-centered has-text-centered">
+        <div class="column is-four-fifths">
+          <img src="./project_page_data/images/teaser.svg" class="is-responsive">
+          <div class="content has-text-justified">
+            <p>
+              Instead of analyzing a model that erased some concept by generating many images and analyzing them,
+              we propose a method that analyzes it using latents that generate the erased concept.
+            </p>
+          </div>
+      </div>
+    </div>
+
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+      </div>
+    </div>
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <!-- Abstract. -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Abstract</h2>
+        <div class="content has-text-justified">
+          <p>
+            Diffusion models dominate the space of text-to-image generation, yet they may produce undesirable outputs,
+            including explicit content or private data.
+            To mitigate this, concept ablation techniques have been explored to limit the generation of certain concepts.
+          </p>
+          <p>
+            In this paper, we reveal that the erased concept information persists in the model and that erased concept images can be generated using the right latent.
+            Utilizing inversion methods, we show that there exist latent seeds capable of generating high quality images of erased concepts.
+          </p>
+          <p>
+            Moreover, we show that these latents have likelihoods that overlap with those of images outside the erased concept.
+            We extend this to demonstrate that for every image from the erased concept set, we can generate many seeds that generate the erased concept.
+            Given the vast space of latents capable of generating ablated concept images, our results suggest that fully erasing concept information may be intractable, highlighting possible vulnerabilities in current concept ablation techniques.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">How it works?</h2>
+        <div class="description">
+          <pr>
+            Starting with an image from the erased concept, we use image inversion to find a latent seed that generates the image.
+            <br>
+            We explore how likely this latent is, along with the reconstruction error (PSNR) of the image using the latent and the diffusion model.
+          </pr>
+        </div>
+          <img src="./project_page_data/images/concept_level_flow.svg" class="is-responsive">
+        <br>
+        <br>
+        <div class="description">
+          <pr>
+            We can also retrieve multiple distant latents that can generate a given image.
+            This is done by inverting the diffusion model's decoder with different initializations (using images \( \mathcal{I}_{s_i} \)) before we perform image inversion.
+          </pr>
+          <br>
+        </div>
+
+        <img src="./project_page_data/images/sib.svg" class="is-responsive">
+      </div>
+    </div>
+
+<div class="container is-max-desktop">
+  <div class="columns is-centered has-text-centered">
+    <div class="column is-four-fifths">
+      <h2 class="title is-3">Geometric interpretation</h2>
+      <div class="description">
+      The distant latents we find can be interpreted geometrically as points on a sphere (in the latent space) with a similar distance to the latent of the erased concept image.
+        <br> All these latents produce images (using the Sequential Inversion Block as shown above) with low reconstruction error compared to \( \mathcal{I}_q \).
+      </div>
+      <img src="./project_page_data/images/sphere.svg" alt="Geometric interpretation" width="100%" height="100%">
+    </div>
+  </div>
+
+
+
+<section class="section" id="BibTeX">
+  <div class="container is-max-desktop content">
+    <div class="columns is-centered has-text-centered">
+      <h2 class="title">BibTeX</h2>
+    </div>
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <pre><code></code>
+<!--<pre><code class="lang-bib">@InProceedings{Malnick_2024_WACV,-->
+<!--  <span class="hljs-attr">author</span> = {Malnick, Shimon <span class="hljs-literal">and</span> Avidan, Shai <span class="hljs-literal">and</span> Fried, Ohad},-->
+<!--  <span class="hljs-attr">title={Taming Normalizing Flows</span>},-->
+<!--  <span class="hljs-attr">booktitle={Proceedings of the IEEE/CVF Winter Conference on Applications of Computer Vision (WACV)},</span>-->
+<!--  <span class="hljs-attr">month= {January},</span>-->
+<!--  <span class="hljs-attr">year={2024},</span>-->
+<!--  <span class="hljs-attr">pages={4644-4654}</span>-->
+<!--}-->
+</code></pre>
+</section>
+
+
+<footer class="footer">
+  <div class="container">
+    <div class="content has-text-centered">
+      <a class="icon-link" href="https://github.com/ShimonMalnick/Taming_a_Generative_Model" class="external-link" disabled>
+        <i class="fab fa-github"></i>
+      </a>
+    </div>
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content">
+          <p>
+            This website is licensed under a <a rel="license"
+                                                href="http://creativecommons.org/licenses/by-sa/4.0/">Creative
+            Commons Attribution-ShareAlike 4.0 International License</a>.
+          </p>
+          <p>
+            Website source code based on the <a href="https://nerfies.github.io/">Nerfies</a> project page.
+            To use their <a href="https://github.com/nerfies/nerfies.github.io">source code</a>, credit them appropriately.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+    <script src="project_page_data/js/globalLinks.js"></script>
+</body>
+</html>
