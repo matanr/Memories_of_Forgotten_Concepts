@@ -112,6 +112,12 @@
    
     <div class="columns is-centered has-text-centered">
         <div class="column is-four-fifths">
+          <div class="content has-text-centered">
+          <p>Many studies aim to erase concepts from diffusion models.
+            While these models may no longer generate images tied to the erased concept when prompted, we ask: <br>
+          </p>
+            <p class="scribble">Is the concept truly erased? Could the model still reproduce it through other means?</p>
+          </div>
           <img src="./project_page_data/images/teaser.svg" class="is-responsive">
           <div class="content has-text-justified">
             <p>
@@ -172,7 +178,7 @@
         <div class="description">
           <pr>
             We can also retrieve multiple distant latents that can generate a given image.
-            This is done by inverting the diffusion model's decoder with different initializations (using images \( \mathcal{I}_{s_i} \)) before we perform image inversion.
+            This is done by inverting the diffusion model's decoder with different initializations (using arbitrary non erased images \( \mathcal{I}_{s_i} \)) before we perform image inversion.
           </pr>
           <br>
         </div>
@@ -184,12 +190,12 @@
 <div class="container is-max-desktop">
   <div class="columns is-centered has-text-centered">
     <div class="column is-four-fifths">
-      <h2 class="title is-3">Geometric interpretation</h2>
+<!--      <h2 class="title is-3">Geometric interpretation</h2>-->
       <div class="description">
       The distant latents we find can be interpreted geometrically as points on a sphere (in the latent space) with a similar distance to the latent of the erased concept image.
         <br> All these latents produce images (using the Sequential Inversion Block as shown above) with low reconstruction error compared to \( \mathcal{I}_q \).
       </div>
-      <img src="./project_page_data/images/sphere.svg" alt="Geometric interpretation" width="100%" height="100%">
+      <img src="./project_page_data/images/sphere.svg" alt="Geometric interpretation" width="80%" height="80%">
     </div>
   </div>
 

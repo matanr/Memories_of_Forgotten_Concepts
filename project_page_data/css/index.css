@@ -2,7 +2,11 @@ body {
   font-family: 'Noto Sans', sans-serif;
 }
 
-
+.scribble{
+    /*font-family: 'Sour Gummy', cursive;*/
+    font-size: 1.7rem;
+    color: #007FFF;
+}
 .footer .icon-link {
     font-size: 25px;
     color: #000;
