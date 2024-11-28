@@ -6,36 +6,31 @@
         content="Memories of Forgotten Concepts">
   <meta name="keywords" content="Diffusion models concept erasure">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-<!-- Google tag (gtag.js) add the  https://www.googletagmanager.com/gtag/js?id=<something> in src below-->
-<script async src=""></script>
-
-<!--<script>-->
-<!--  window.dataLayer = window.dataLayer || [];-->
-<!--  function gtag(){dataLayer.push(arguments);}-->
-<!--  gtag('js', new Date());-->
-
-<!--  gtag('config', 'G-J45NMQRWYL');-->
-<!--</script>-->
 
   <title>Memories of Forgotten Concepts</title>
 
   <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
-        rel="stylesheet">
+        rel="stylesheet" media="print" onload="this.media='all'">
 
-  <link rel="stylesheet" href="./project_page_data/css/bulma.min.css">
-  <link rel="stylesheet" href="./project_page_data/css/bulma-carousel.min.css">
-  <link rel="stylesheet" href="./project_page_data/css/bulma-slider.min.css">
-  <link rel="stylesheet" href="./project_page_data/css/fontawesome.all.min.css">
+  <link rel="stylesheet" href="./project_page_data/css/bulma.min.css" media="print" onload="this.media='all'">
+  <link rel="stylesheet" href="./project_page_data/css/bulma-carousel.min.css" media="print" onload="this.media='all'">
+  <link rel="stylesheet" href="./project_page_data/css/bulma-slider.min.css" media="print" onload="this.media='all'">
+  <link rel="stylesheet" href="./project_page_data/css/fontawesome.all.min.css" media="print" onload="this.media='all'">
   <link rel="stylesheet"
-        href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
-  <link rel="stylesheet" href="./project_page_data/css/index.css">
+        href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css" media="print" onload="this.media='all'">
+  <link rel="stylesheet" href="./project_page_data/css/index.css" media="print" onload="this.media='all'">
   <link rel="icon" href="./project_page_data/images/logo.svg">
+  <link rel="preload" as="image" href="project_page_data/images/concept_level_flow.webp">
+  <link rel="preload" as="image" href="project_page_data/images/sib.webp">
+  <link rel="preload" as="image" href="project_page_data/images/sphere.webp">
+  <link rel="preload" as="image" href="project_page_data/images/teaser.webp">
+  <link rel="preload" as="image" href="project_page_data/images/uni.svg">
 
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script defer src="./project_page_data/js/fontawesome.all.min.js"></script>
-  <script src="./project_page_data/js/bulma-carousel.min.js"></script>
-  <script src="./project_page_data/js/bulma-slider.min.js"></script>
-  <script src="./project_page_data/js/index.js"></script>
+  <script defer src="./project_page_data/js/bulma-carousel.min.js"></script>
+  <script defer src="./project_page_data/js/bulma-slider.min.js"></script>
+  <script defer src="./project_page_data/js/index.js"></script>
   <script type="text/javascript" async
           src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
   </script>
@@ -47,7 +42,7 @@
     <div class="container is-max-desktop">
       <div class="columns is-centered">
         <div class="column has-text-centered">
-           <img src="./project_page_data/images/uni.svg" class="is-responsive" width="40%" height="auto" alt="Universities logos">
+           <img src="./project_page_data/images/uni.svg" loading="lazy" class="is-responsive" width="40%" height="auto" alt="Universities logos">
           <h1 class="title is-1 publication-title">Memories of Forgotten Concepts</h1>
           <div class="is-size-5 publication-authors">
             <span class="author-block">
@@ -119,19 +114,13 @@
           </p>
             <p class="scribble">Is the concept truly erased? Could the model still reproduce it through other means?</p>
           </div>
-          <img src="./project_page_data/images/teaser.png" class="is-responsive" alt="Our work vs. prior art">
+          <img src="./project_page_data/images/teaser.webp" class="is-responsive" alt="Our work vs. prior art" height="90%" width="auto">
           <div class="content has-text-justified">
             <p>
               Instead of analyzing a model that erased some concept by generating many images and analyzing them,
               we propose a method that analyzes it using latents that generate the erased concept.
             </p>
           </div>
-      </div>
-    </div>
-
-  <div class="container is-max-desktop">
-    <div class="columns is-centered has-text-centered">
-      <div class="column is-four-fifths">
       </div>
     </div>
   </div>
@@ -165,6 +154,7 @@
 </section>
 
 <section class="section">
+  <div class="container is-max-desktop">
     <div class="columns is-centered has-text-centered">
       <div class="column is-four-fifths">
         <h2 class="title is-3">Analysis</h2>
@@ -174,35 +164,45 @@
             We explore how likely this latent is, along with the reconstruction error (PSNR) of the image using the latent and the diffusion model.
           </pr>
         </div>
-          <img src="./project_page_data/images/concept_level_flow.png" class="is-responsive" alt="Analysis using inversion">
+          <img src="./project_page_data/images/concept_level_flow.webp" class="is-responsive" alt="Analysis using inversion" height="80%" width="auto">
         <br>
         <br>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
         <div class="description">
           <pr>
             We can also retrieve multiple distant latents that can generate a given image.
             This is done by inverting the diffusion model's decoder with different initializations (using arbitrary non erased images \( \mathcal{I}_{s_i} \)) before we perform image inversion.
           </pr>
           <br>
+
         </div>
-
-        <img src="./project_page_data/images/sib.png" class="is-responsive" alt="Analysis using the 'Sequential Inversion Block'">
+        <img src="./project_page_data/images/sib.webp" class="is-responsive" alt="Analysis using the 'Sequential Inversion Block'">
       </div>
-    </div>
-
-
-<div class="container is-max-desktop">
-  <div class="columns is-centered has-text-centered">
-    <div class="column is-four-fifths">
-<!--      <h2 class="title is-3">Geometric interpretation</h2>-->
-      <div class="description">
-      The distant latents we find can be interpreted geometrically as points on a sphere (in the latent space) with a similar distance to the latent of the erased concept image.
-        <br> All these latents produce images (using the Sequential Inversion Block as shown above) with low reconstruction error compared to \( \mathcal{I}_q \).
-      </div>
-      <img src="./project_page_data/images/sphere.png" alt="Geometric interpretation" width="80%" height="80%">
     </div>
   </div>
 </section>
 
+<section class="section">
+<div class="container is-max-desktop">
+  <div class="columns is-centered has-text-centered">
+    <div class="column is-four-fifths">
+      <div class="description">
+      The distant latents we find can be interpreted geometrically as points on a sphere (in the latent space) with a similar distance to the latent of the erased concept image.
+        <br> All these latents produce images (using the Sequential Inversion Block as shown above) with low reconstruction error compared to \( \mathcal{I}_q \).
+      </div>
+      <img src="./project_page_data/images/sphere.webp" alt="Geometric interpretation" width="80%" height="80%">
+    </div>
+  </div>
+</div>
+</section>
 
 
 <section class="section" id="BibTeX">
@@ -222,6 +222,9 @@
 <!--  <span class="hljs-attr">pages={4644-4654}</span>-->
 <!--}-->
 </code></pre>
+      </div>
+  </div>
+  </div>
 </section>
 
 <section>

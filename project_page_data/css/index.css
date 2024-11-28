@@ -2,15 +2,27 @@ body {
   font-family: 'Noto Sans', sans-serif;
 }
 
-section:nth-child(odd) {
+@font-face {
+    font-family: 'Noto Sans';
+    font-display: swap;
+}
+
+section:nth-child(odd){
     background-color: white;
 }
-section:nth-child(even) {
+section:nth-child(even), pre{
     background-color: #E8E8E8;
 }
 
-pre{
-    background-color: #E8E8E8;
+/* Update link color */
+a {
+    color: #0056b3; /* A darker shade of blue */
+    text-decoration: underline; /* Improves visibility further */
+}
+
+/* Optional: Hover and focus states */
+a:hover, a:focus {
+    color: #003580; /* Even darker on hover/focus */
 }
 
 .scribble{
