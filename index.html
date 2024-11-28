@@ -26,14 +26,17 @@
   <link rel="preload" as="image" href="project_page_data/images/teaser.webp">
   <link rel="preload" as="image" href="project_page_data/images/uni.svg">
 
-  <script defer src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-  <script defer src="./project_page_data/js/fontawesome.all.min.js"></script>
+  <link href="https://use.fontawesome.com/releases/v5.0.1/css/all.css" rel="stylesheet" media="print" onload="this.media='all'">
+  <link href="https://cdn.jsdelivr.net/npm/bulma-slider@2.0.5/dist/css/bulma-slider.min.css" rel="stylesheet" media="print" onload="this.media='all'">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma-carousel@4.0.3/dist/css/bulma-carousel.min.css" media="print" onload="this.media='all'">
+  <link rel="preload" href="./project_page_data/js/index.js" as="font">
+
   <script defer src="./project_page_data/js/bulma-carousel.min.js"></script>
   <script defer src="./project_page_data/js/bulma-slider.min.js"></script>
   <script defer src="./project_page_data/js/index.js"></script>
-  <script type="text/javascript" async
-          src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
-  </script>
+  <script defer src="./project_page_data/js/fontawesome.all.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js" async></script>
+  <script src="load-mathjax.js" async></script>
 </head>
 <body>
 
@@ -42,21 +45,21 @@
     <div class="container is-max-desktop">
       <div class="columns is-centered">
         <div class="column has-text-centered">
-           <img src="./project_page_data/images/uni.svg" loading="lazy" class="is-responsive" width="40%" height="auto" alt="Universities logos">
+           <img src="./project_page_data/images/uni.svg" loading="lazy" class="is-responsive" width="300" height="150" alt="Universities logos">
           <h1 class="title is-1 publication-title">Memories of Forgotten Concepts</h1>
           <div class="is-size-5 publication-authors">
             <span class="author-block">
-              <a href="https://scholar.google.com/citations?user=5TS4vucAAAAJ&hl=en&oi=ao">Matan Rusanovsky</a><sup>1*</sup>,</span>
+              <a target="_blank" href="https://scholar.google.com/citations?user=5TS4vucAAAAJ&hl=en&oi=ao">Matan Rusanovsky</a><sup>1*</sup>,</span>
             <span class="author-block">
-              <a href="https://www.malnick.net">Shimon Malnick</a><sup>1*</sup>,</span>
+              <a target="_blank" href="https://www.malnick.net">Shimon Malnick</a><sup>1*</sup>,</span>
             <span class="author-block">
-              <a href="https://scholar.google.com/citations?hl=en&user=czm6bkUAAAAJ">Amir Jevnisek</a><sup>1*</sup>,</span>
+              <a target="_blank" href="https://scholar.google.com/citations?hl=en&user=czm6bkUAAAAJ">Amir Jevnisek</a><sup>1*</sup>,</span>
             <span class="author-block">
-              <a href="https://www.ohadf.com">Ohad Fried</a><sup>2</sup>
+              <a target="_blank" href="https://www.ohadf.com">Ohad Fried</a><sup>2</sup>
             </span>
             and
             <span class="author-block">
-              <a href="http://www.eng.tau.ac.il/~avidan/">Shai Avidan</a><sup>1</sup>,</span>
+              <a target="_blank" href="http://www.eng.tau.ac.il/~avidan/">Shai Avidan</a><sup>1</sup>,</span>
 
           </div>
 
@@ -114,7 +117,7 @@
           </p>
             <p class="scribble">Is the concept truly erased? Could the model still reproduce it through other means?</p>
           </div>
-          <img src="./project_page_data/images/teaser.webp" class="is-responsive" alt="Our work vs. prior art" height="90%" width="auto">
+          <img src="./project_page_data/images/teaser.webp" class="is-responsive" alt="Our work vs. prior art" height="239" width="951">
           <div class="content has-text-justified">
             <p>
               Instead of analyzing a model that erased some concept by generating many images and analyzing them,
@@ -164,7 +167,7 @@
             We explore how likely this latent is, along with the reconstruction error (PSNR) of the image using the latent and the diffusion model.
           </pr>
         </div>
-          <img src="./project_page_data/images/concept_level_flow.webp" class="is-responsive" alt="Analysis using inversion" height="80%" width="auto">
+          <img src="./project_page_data/images/concept_level_flow.webp" class="is-responsive" alt="Analysis using inversion" height="218" width="793">
         <br>
         <br>
       </div>
@@ -184,7 +187,7 @@
           <br>
 
         </div>
-        <img src="./project_page_data/images/sib.webp" class="is-responsive" alt="Analysis using the 'Sequential Inversion Block'">
+        <img src="./project_page_data/images/sib.webp" class="is-responsive" alt="Analysis using the 'Sequential Inversion Block'" width="956" height="372">
       </div>
     </div>
   </div>
@@ -198,7 +201,7 @@
       The distant latents we find can be interpreted geometrically as points on a sphere (in the latent space) with a similar distance to the latent of the erased concept image.
         <br> All these latents produce images (using the Sequential Inversion Block as shown above) with low reconstruction error compared to \( \mathcal{I}_q \).
       </div>
-      <img src="./project_page_data/images/sphere.webp" alt="Geometric interpretation" width="80%" height="80%">
+      <img src="./project_page_data/images/sphere.webp" alt="Geometric interpretation" width="567" height="402">
     </div>
   </div>
 </div>
@@ -244,8 +247,8 @@
             Commons Attribution-ShareAlike 4.0 International License</a>.
           </p>
           <p>
-            Website source code based on the <a href="https://nerfies.github.io/">Nerfies</a> project page.
-            To use their <a href="https://github.com/nerfies/nerfies.github.io">source code</a>, credit them appropriately.
+            Website source code based on the <a target="_blank" href="https://nerfies.github.io/">Nerfies</a> project page.
+            To use their <a target="_blank" href="https://github.com/nerfies/nerfies.github.io">source code</a>, credit them appropriately.
           </p>
         </div>
       </div>
@@ -254,6 +257,5 @@
 </footer>
 </section>
 
-    <script src="project_page_data/js/globalLinks.js"></script>
 </body>
 </html>
