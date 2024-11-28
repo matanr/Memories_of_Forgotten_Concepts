@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="description"
@@ -47,18 +47,19 @@
     <div class="container is-max-desktop">
       <div class="columns is-centered">
         <div class="column has-text-centered">
-           <img src="./project_page_data/images/uni.svg" class="is-responsive">
+           <img src="./project_page_data/images/uni.svg" class="is-responsive" width="40%" height="auto" alt="Universities logos">
           <h1 class="title is-1 publication-title">Memories of Forgotten Concepts</h1>
           <div class="is-size-5 publication-authors">
             <span class="author-block">
-              <a href="https://scholar.google.com/citations?user=5TS4vucAAAAJ&hl=en&oi=ao">Matan Rusanovsky </a><sup>1*</sup>,</span>
+              <a href="https://scholar.google.com/citations?user=5TS4vucAAAAJ&hl=en&oi=ao">Matan Rusanovsky</a><sup>1*</sup>,</span>
             <span class="author-block">
-              <a href="https://www.malnick.net">Shimon Malnick </a><sup>1*</sup>,</span>
+              <a href="https://www.malnick.net">Shimon Malnick</a><sup>1*</sup>,</span>
             <span class="author-block">
-              <a href="https://scholar.google.com/citations?hl=en&user=czm6bkUAAAAJ">Amir Jevnisek </a><sup>1*</sup>,</span>
+              <a href="https://scholar.google.com/citations?hl=en&user=czm6bkUAAAAJ">Amir Jevnisek</a><sup>1*</sup>,</span>
             <span class="author-block">
               <a href="https://www.ohadf.com">Ohad Fried</a><sup>2</sup>
             </span>
+            and
             <span class="author-block">
               <a href="http://www.eng.tau.ac.il/~avidan/">Shai Avidan</a><sup>1</sup>,</span>
 
@@ -77,7 +78,7 @@
                 <!-- Add link to arxiv pdf here -->
                 <a href=""
                    target="_blank"
-                   class="external-link button is-normal is-rounded is-dark">
+                   class="external-link button is-normal is-rounded is-dark" aria-label="Arxiv paper version">
                   <span class="icon">
                       <i class="fas fa-file-pdf"></i>
                   </span>
@@ -87,9 +88,9 @@
 
               <span class="link-block">
                 <!-- Add link to code on github here -->
-                <a href=""
+                <a href="https://github.com/matanr/Memories_of_Forgotten_Concepts/"
                    target="_blank"
-                   class="external-link button is-normal is-rounded is-dark">
+                   class="external-link button is-normal is-rounded is-dark" aria-label="Code implementation">
                   <span class="icon">
                       <i class="fab fa-github"></i>
                   </span>
@@ -118,7 +119,7 @@
           </p>
             <p class="scribble">Is the concept truly erased? Could the model still reproduce it through other means?</p>
           </div>
-          <img src="./project_page_data/images/teaser.svg" class="is-responsive">
+          <img src="./project_page_data/images/teaser.png" class="is-responsive" alt="Our work vs. prior art">
           <div class="content has-text-justified">
             <p>
               Instead of analyzing a model that erased some concept by generating many images and analyzing them,
@@ -133,6 +134,8 @@
       <div class="column is-four-fifths">
       </div>
     </div>
+  </div>
+</section>
 
 <section class="section">
   <div class="container is-max-desktop">
@@ -161,18 +164,17 @@
   </div>
 </section>
 
-
+<section class="section">
     <div class="columns is-centered has-text-centered">
       <div class="column is-four-fifths">
-        <h2 class="title is-3">How it works?</h2>
+        <h2 class="title is-3">Analysis</h2>
         <div class="description">
           <pr>
             Starting with an image from the erased concept, we use image inversion to find a latent seed that generates the image.
-            <br>
             We explore how likely this latent is, along with the reconstruction error (PSNR) of the image using the latent and the diffusion model.
           </pr>
         </div>
-          <img src="./project_page_data/images/concept_level_flow.svg" class="is-responsive">
+          <img src="./project_page_data/images/concept_level_flow.png" class="is-responsive" alt="Analysis using inversion">
         <br>
         <br>
         <div class="description">
@@ -183,9 +185,10 @@
           <br>
         </div>
 
-        <img src="./project_page_data/images/sib.svg" class="is-responsive">
+        <img src="./project_page_data/images/sib.png" class="is-responsive" alt="Analysis using the 'Sequential Inversion Block'">
       </div>
     </div>
+
 
 <div class="container is-max-desktop">
   <div class="columns is-centered has-text-centered">
@@ -195,9 +198,10 @@
       The distant latents we find can be interpreted geometrically as points on a sphere (in the latent space) with a similar distance to the latent of the erased concept image.
         <br> All these latents produce images (using the Sequential Inversion Block as shown above) with low reconstruction error compared to \( \mathcal{I}_q \).
       </div>
-      <img src="./project_page_data/images/sphere.svg" alt="Geometric interpretation" width="80%" height="80%">
+      <img src="./project_page_data/images/sphere.png" alt="Geometric interpretation" width="80%" height="80%">
     </div>
   </div>
+</section>
 
 
 
@@ -207,8 +211,8 @@
       <h2 class="title">BibTeX</h2>
     </div>
     <div class="columns is-centered has-text-centered">
-      <div class="column is-four-fifths">
-        <pre><code></code>
+      <div class="column is-four-fifths bibtex">
+        <pre><code ></code>
 <!--<pre><code class="lang-bib">@InProceedings{Malnick_2024_WACV,-->
 <!--  <span class="hljs-attr">author</span> = {Malnick, Shimon <span class="hljs-literal">and</span> Avidan, Shai <span class="hljs-literal">and</span> Fried, Ohad},-->
 <!--  <span class="hljs-attr">title={Taming Normalizing Flows</span>},-->
@@ -220,7 +224,7 @@
 </code></pre>
 </section>
 
-
+<section>
 <footer class="footer">
   <div class="container">
     <div class="content has-text-centered">
@@ -245,6 +249,7 @@
     </div>
   </div>
 </footer>
+</section>
 
     <script src="project_page_data/js/globalLinks.js"></script>
 </body>

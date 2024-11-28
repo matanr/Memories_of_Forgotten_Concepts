@@ -2,6 +2,17 @@ body {
   font-family: 'Noto Sans', sans-serif;
 }
 
+section:nth-child(odd) {
+    background-color: white;
+}
+section:nth-child(even) {
+    background-color: #E8E8E8;
+}
+
+pre{
+    background-color: #E8E8E8;
+}
+
 .scribble{
     /*font-family: 'Sour Gummy', cursive;*/
     font-size: 1.7rem;
