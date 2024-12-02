@@ -4,6 +4,14 @@ from PIL import Image
 
 
 def clip_similarity(image_path, text):
+    """Compute the similarity between an image and a text using CLIP model.
+
+    Args:
+        image_path (str): Path to the image file.
+        text (str): Text to compare with the image.
+    Returns:
+        float: Similarity score between the image and the text
+    """
     model = CLIPModel.from_pretrained("openai/clip-vit-base-patch32")
     processor = CLIPProcessor.from_pretrained("openai/clip-vit-base-patch32")
     # Open the image
@@ -11,9 +19,6 @@ def clip_similarity(image_path, text):
 
     # Process image and truncated text inputs
     inputs = processor(text=[text], images=image, return_tensors="pt", padding=True, truncation=True)
-    #
-    # # Process image and text inputs
-    # inputs = processor(text=[text], images=image, return_tensors="pt", padding=True)
 
     # Compute the embeddings
     with torch.no_grad():

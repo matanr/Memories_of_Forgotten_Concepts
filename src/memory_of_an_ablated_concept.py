@@ -1,77 +1,38 @@
-import pandas as pd
 import argparse
 import os
-
 import yaml
 import torch
 from easydict import EasyDict
 import os.path as osp
-
 from vae_inversion_tools import get_latent_from_encoder
-from pipeline_stable_diffusion_unlikely_images import StableDiffusionPipelineUnlikelyImages
-
-from torch.distributions import Normal
-import torch.nn.functional as F
-from diffusers import DDIMScheduler
+from utils import tensor_to_nll, calculate_psnr
+from diffusers import DDIMScheduler, StableDiffusionPipeline
+from transformers import CLIPTextModel
 from PIL import Image
-from torch.utils.data import Dataset
+from concept_datasets import CocoCaptions17Paths, CaptionsPaths
 import json
-
 from nti import ddim_inversion, null_text_inversion, reconstruct
-
-from analyze_latents import analyze_psnr_values, analyze_nll_values, analyze_goal_source_normal_nll_values
-from detect_concepts import detect_concept_post_attack, detect_concept_pre_attack
+from analyze_latents import (
+    analyze_psnr_values,
+    analyze_nll_values,
+    analyze_goal_reference_normal_nll_values,
+)
+from detect_concepts import detect_concept_post_analysis
 from analysis_utils import clip_similarity
 import numpy as np
-import torch.nn as nn
-from torchvision import transforms
-
 from renoise.main import run as renoise_invert
 from renoise.eunms import Model_Type, Scheduler_Type
 from renoise.utils.enums_utils import get_pipes
 from renoise.config import RunConfig
 
 
-class CocoCaptions17Paths(Dataset):
-    def __init__(self, root, train=True):
-        self.train = train
-        if self.train:
-            self.images_root = f"{root}/train2017"
-            with open(f"{root}/annotations/captions_train2017.json") as f:
-                self.captions_map = self._parse_captions(json.load(f)['annotations'])
-        else:
-            self.images_root = f"{root}/val2017"
-            with open(f"{root}/annotations/captions_val2017.json") as f:
-                self.captions_map = self._parse_captions(json.load(f)['annotations'])
-        self.images_list = os.listdir(self.images_root)
-        self.len = len(self.images_list)
-
-    @staticmethod
-    def _parse_captions(captions):
-        captions_map = {}
-        for d in captions:
-            img_id = d['image_id']
-            if img_id not in captions_map:
-                captions_map[img_id] = d['caption']
-        return captions_map
-
-    def __len__(self):
-        return self.len
-
-    def __getitem__(self, item):
-        return self._get_single_item(item)
-
-    def _get_single_item(self, item):
-        image_path = self.get_image_path_by_index(item)
-        image_id = int(self.images_list[item].split(".")[0])
-        caption = self.captions_map[image_id]
-        return image_path, caption
-
-    def get_image_path_by_index(self, index):
-        return os.path.join(self.images_root, self.images_list[index])
-
-
 def validate_and_get_args():
+    """
+    Validate and parse command-line arguments.
+
+    Returns:
+        argparse.Namespace: Parsed command-line arguments.
+    """
     parser = argparse.ArgumentParser(
         description="Generate unlikely images",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
@@ -95,10 +56,7 @@ def validate_and_get_args():
         type=int,
         nargs="+",
         default=None,
-        help="indices of images to perform nti on. This index is the relative index of the image in the dataset directory",
-    )
-    parser.add_argument(
-        "--local_running_prefix", type=str, help="Local running prefix", default=""
+        help="indices of images. This index is the relative index of the image in the dataset directory",
     )
     parser.add_argument(
         "--num_diffusion_inversion_steps",
@@ -108,10 +66,10 @@ def validate_and_get_args():
     )
 
     parser.add_argument(
-        "--source_dataset_root",
+        "--reference_dataset_root",
         type=str,
         default="./mscoco17",
-        help="Path to the source root directory (default is MSCOCO17): https://cocodataset.org/#download",
+        help="Path to the reference root directory (default is MSCOCO17): https://cocodataset.org/#download",
     )
 
     parser.add_argument(
@@ -140,34 +98,58 @@ def validate_and_get_args():
         default=None,
         help="Name of the ablated concept. For example: nudity, vangogh, parachute, garbage_truck, tench, church",
     )
-    
-    parser.add_argument('--tamed_vae_path', type=str, default=None, help="Path to the tamed VAE")
-    
-    parser.add_argument('--image_type', type=str, default='coco', help="Type of image to generate")
-    parser.add_argument('--diffusion_inversion_method', type=str, default='renoise', help="Diffusion inversion method. Valid options are 'nti' and 'renoise'")
 
-    parser.add_argument('--num_src_images', type=int, default=None, help="Number of source images")
+    parser.add_argument(
+        "--image_type", type=str, default="coco", help="Type of image to generate"
+    )
+    parser.add_argument(
+        "--diffusion_inversion_method",
+        type=str,
+        default="renoise",
+        help="Diffusion inversion method. Valid options are 'nti' and 'renoise'",
+    )
 
-    parser.add_argument('--show_figures', default=False, action='store_true', help="Show figures")
-    parser.add_argument('--analyze_only', default=False, action='store_true', help="Analyze only, do not find latents")
+    parser.add_argument(
+        "--num_ref_images", type=int, default=None, help="Number of reference images"
+    )
+
+    parser.add_argument(
+        "--show_figures", default=False, action="store_true", help="Show figures"
+    )
+    parser.add_argument(
+        "--analyze_only",
+        default=False,
+        action="store_true",
+        help="Analyze only, do not find latents",
+    )
 
     args = parser.parse_args()
     args = EasyDict(vars(args))
-    if args.local_running_prefix:
-        for attr in ["dataset_dir", "out_dir"]:
-            setattr(args, attr, f"{args.local_running_prefix}{getattr(args, attr)}")
 
     return args
 
 
-def tensor_to_nll(z):
-    standard_normal = Normal(0, 1)
-    likelihood = standard_normal.log_prob(z.detach().cpu()).sum()
-    return -1 * likelihood.item()
+def nti_invert(
+    pipe,
+    z_0,
+    prompt,
+    num_diffusion_inversion_steps: int = 10,
+    out_dir: str = "test_out",
+    is_return_both=False,
+):
+    """
+    Perform neural text inversion (NTI) on a given latent vector and prompt.
+    Args:
+        pipe: The pipeline object containing the VAE, scheduler, UNet, and other components.
+        z_0: The initial latent vector.
+        prompt: The text prompt to guide the inversion process.
+        num_diffusion_inversion_steps (int, optional): Number of diffusion inversion steps. Default is 10.
+        out_dir (str, optional): Directory to save the output images. Default is "test_out".
+        is_return_both (bool, optional): If True, return both the final latent vector and the initial latent vector. Default is False.
+    Returns:
+        The final latent vector after inversion. If is_return_both is True, returns a tuple of (final latent vector, initial latent vector).
+    """
 
-def nti_invert(pipe, z_0, prompt,
-               num_diffusion_inversion_steps: int = 10, out_dir: str = 'test_out',
-               is_return_both=False):
     latent = z_0 * pipe.vae.scaling_factor
 
     text_embeddings = pipe.encode_prompt(prompt, device, 1, False, None)[0]
@@ -176,7 +158,11 @@ def nti_invert(pipe, z_0, prompt,
     all_latents = ddim_inversion(latent, text_embeddings, pipe.scheduler, pipe.unet)
 
     z_T, all_null_texts = null_text_inversion(
-        pipe, all_latents, prompt, num_opt_steps=num_diffusion_inversion_steps, device=device
+        pipe,
+        all_latents,
+        prompt,
+        num_opt_steps=num_diffusion_inversion_steps,
+        device=device,
     )
     recon_img = reconstruct(
         pipe, z_T, prompt, all_null_texts, guidance_scale=1, device=device
@@ -189,12 +175,31 @@ def nti_invert(pipe, z_0, prompt,
     pp_image = pipe.image_processor.postprocess(reconstruction)
     pp_image[0].save(f"{out_dir}/input.png")
 
-
     if is_return_both:
         return z_T, z_0
     return z_T
 
-def diffusion_inversion(pipe, out_dir, target_ds, target_imgs_indices, num_diffusion_inversion_steps=20, inversion_method="nti"):
+
+def diffusion_inversion(
+    pipe,
+    out_dir,
+    target_ds,
+    target_imgs_indices,
+    num_diffusion_inversion_steps=20,
+    inversion_method="nti",
+):
+    """
+    Perform diffusion inversion on a set of target images.
+    Args:
+        pipe (Pipeline): The diffusion pipeline object containing the model and other components.
+        out_dir (str): The output directory where results will be saved.
+        target_ds (Dataset): The dataset containing target images and their corresponding prompts.
+        target_imgs_indices (list): List of indices or names of target images to be processed.
+        num_diffusion_inversion_steps (int, optional): Number of diffusion inversion steps. Default is 20.
+        inversion_method (str, optional): The method to use for inversion. Options are "nti" and "renoise". Default is "nti".
+    Returns:
+        None
+    """
     if inversion_method == "renoise":
         pipe_inversion, pipe_inference = get_pipes(
             Model_Type.SD14, Scheduler_Type.DDIM, device=device
@@ -220,14 +225,19 @@ def diffusion_inversion(pipe, out_dir, target_ds, target_imgs_indices, num_diffu
         z_0 = get_latent_from_encoder(pipe.vae.encode, target_img)
         torch.save(z_0, os.path.join(out_dir, f"z_0_target_{image_idx}.pth"))
 
-        out_dir_invert_from_z0_to_zT = os.path.join(out_dir,
-                                                    f"diffusion_inversion_target_{image_idx}")
+        out_dir_invert_from_z0_to_zT = os.path.join(
+            out_dir, f"diffusion_inversion_target_{image_idx}"
+        )
         os.makedirs(out_dir_invert_from_z0_to_zT, exist_ok=True)
         if inversion_method == "nti":
-            z_T = nti_invert(pipe, z_0, constant_prompt,
-                             num_diffusion_inversion_steps=num_diffusion_inversion_steps,
-                             out_dir=out_dir_invert_from_z0_to_zT,
-                             is_return_both=False)
+            z_T = nti_invert(
+                pipe,
+                z_0,
+                constant_prompt,
+                num_diffusion_inversion_steps=num_diffusion_inversion_steps,
+                out_dir=out_dir_invert_from_z0_to_zT,
+                is_return_both=False,
+            )
         elif inversion_method == "renoise":
             target_img.save(f"{out_dir_invert_from_z0_to_zT}/input.png")
 
@@ -240,13 +250,36 @@ def diffusion_inversion(pipe, out_dir, target_ds, target_imgs_indices, num_diffu
                 do_reconstruction=True,
             )
             # save the reconstructed image
-            img.save(osp.join(out_dir_invert_from_z0_to_zT, f"{num_diffusion_inversion_steps}_inversion_steps.png"))
+            img.save(
+                osp.join(
+                    out_dir_invert_from_z0_to_zT,
+                    f"{num_diffusion_inversion_steps}_inversion_steps.png",
+                )
+            )
 
         torch.save(z_T, os.path.join(out_dir, f"z_T_target_{image_idx}.pth"))
 
 
-def store_z_T_of_src_imgs_from_encoder(pipe, out_dir, source_ds, src_img_indices, num_diffusion_inversion_steps=20, inversion_method="nti"):
-
+def store_z_T_of_ref_imgs_from_encoder(
+    pipe,
+    out_dir,
+    ref_ds,
+    ref_img_indices,
+    num_diffusion_inversion_steps=20,
+    inversion_method="nti",
+):
+    """
+    Stores the latent representations (z_T) of reference images from an encoder.
+    Args:
+        pipe (Pipeline): The pipeline object containing the VAE and other components.
+        out_dir (str): The output directory where the latent representations and images will be saved.
+        ref_ds (Dataset): The dataset containing reference images and their corresponding prompts.
+        ref_img_indices (list): List of indices or names of reference images to process.
+        num_diffusion_inversion_steps (int, optional): Number of diffusion inversion steps. Default is 20.
+        inversion_method (str, optional): The method to use for inversion. Options are "nti" or "renoise". Default is "nti".
+    Returns:
+        None
+    """
     if inversion_method == "renoise":
         pipe_inversion, pipe_inference = get_pipes(
             Model_Type.SD14, Scheduler_Type.DDIM, device=device
@@ -265,28 +298,33 @@ def store_z_T_of_src_imgs_from_encoder(pipe, out_dir, source_ds, src_img_indices
             seed=42,
         )
 
-    for image_idx, image_name in enumerate(src_img_indices):
+    for image_idx, image_name in enumerate(ref_img_indices):
+        ref_img, prompt = ref_ds[image_name]
+        ref_img = Image.open(ref_img)
+        ref_img = ref_img.resize((512, 512))
 
-        source_img, prompt = source_ds[image_name]
-        source_img = Image.open(source_img)
-        source_img = source_img.resize((512, 512))
+        z_0 = get_latent_from_encoder(pipe.vae.encode, ref_img)
+        torch.save(z_0, os.path.join(out_dir, f"z_0_ref_{image_idx}.pth"))
 
-        z_0 = get_latent_from_encoder(pipe.vae.encode, source_img)
-        torch.save(z_0, os.path.join(out_dir, f"z_0_source_{image_idx}.pth"))
-
-        out_dir_invert_from_z0_to_zT = os.path.join(out_dir, f"diffusion_inversion_source_{image_idx}")
+        out_dir_invert_from_z0_to_zT = os.path.join(
+            out_dir, f"diffusion_inversion_ref_{image_idx}"
+        )
         os.makedirs(out_dir_invert_from_z0_to_zT, exist_ok=True)
 
         if inversion_method == "nti":
-            z_T = nti_invert(pipe, z_0, prompt,
-                             num_diffusion_inversion_steps=num_diffusion_inversion_steps,
-                             out_dir=out_dir_invert_from_z0_to_zT,
-                             is_return_both=False)
+            z_T = nti_invert(
+                pipe,
+                z_0,
+                prompt,
+                num_diffusion_inversion_steps=num_diffusion_inversion_steps,
+                out_dir=out_dir_invert_from_z0_to_zT,
+                is_return_both=False,
+            )
         elif inversion_method == "renoise":
-            source_img.save(f"{out_dir_invert_from_z0_to_zT}/input.png")
+            ref_img.save(f"{out_dir_invert_from_z0_to_zT}/input.png")
 
             img, z_T, _, _ = renoise_invert(
-                init_image=source_img,
+                init_image=ref_img,
                 prompt=prompt,
                 cfg=config,
                 pipe_inversion=pipe_inversion,
@@ -294,15 +332,25 @@ def store_z_T_of_src_imgs_from_encoder(pipe, out_dir, source_ds, src_img_indices
                 do_reconstruction=True,
             )
             # save the reconstructed image
-            img.save(osp.join(out_dir_invert_from_z0_to_zT, f"{num_diffusion_inversion_steps}_inversion_steps.png"))
+            img.save(
+                osp.join(
+                    out_dir_invert_from_z0_to_zT,
+                    f"{num_diffusion_inversion_steps}_inversion_steps.png",
+                )
+            )
 
-        torch.save(z_T, os.path.join(out_dir, f"z_T_source_{image_idx}.pth"))
+        torch.save(z_T, os.path.join(out_dir, f"z_T_ref_{image_idx}.pth"))
 
 
-
-def create_collage(image_paths, out_dir, collage_size=(10, 10), image_size=(100, 100), out_name_prefix=None):
+def create_collage(
+    image_paths,
+    out_dir,
+    collage_size=(10, 10),
+    image_size=(100, 100),
+    out_name_prefix=None,
+):
     """
-    Create a 10x10 collage from a list of image paths.
+    Create a 10x10 collage from a list of image paths and save the collage image.
 
     Args:
         image_paths (list): List of image file paths.
@@ -310,8 +358,6 @@ def create_collage(image_paths, out_dir, collage_size=(10, 10), image_size=(100,
         image_size (tuple): The size to resize each image to (default is 100x100 pixels).
         output_path (str): Path to save the final collage image (default is 'collage.jpg').
 
-    Returns:
-        Image: The final collage image.
     """
     # Number of rows and columns
     rows, cols = collage_size
@@ -319,7 +365,7 @@ def create_collage(image_paths, out_dir, collage_size=(10, 10), image_size=(100,
     # Create a blank canvas for the collage
     collage_width = cols * image_size[0]
     collage_height = rows * image_size[1]
-    collage_image = Image.new('RGB', (collage_width, collage_height))
+    collage_image = Image.new("RGB", (collage_width, collage_height))
 
     # Loop through the list of image paths and place them in the collage
     for i, img_path in enumerate(image_paths):
@@ -338,68 +384,130 @@ def create_collage(image_paths, out_dir, collage_size=(10, 10), image_size=(100,
     # Save the collage image
     collage_image.save(osp.join(out_dir, f"{out_name_prefix}_collage.jpg"))
 
-    return collage_image
 
+def create_all_collages(
+    out_dir, plots_dir, num_diffusion_inversion_steps=50, max_images_per_collage=10
+):
+    """
+    Creates collages of images generated from diffusion inversion steps and their corresponding input images.
+    Parameters:
+    out_dir (str): The directory containing the output images from the diffusion inversion process.
+    plots_dir (str): The directory where the generated collages will be saved.
+    num_diffusion_inversion_steps (int, optional): The number of diffusion inversion steps used to generate the images. Default is 50.
+    max_images_per_collage (int, optional): The maximum number of images to include in each collage. Default is 10.
+    Returns:
+    None
+    """
 
-def create_all_collages(out_dir, plots_dir, num_diffusion_inversion_steps=50, max_images_per_collage=10):
-
-    diff_paths = [osp.join(out_dir, x, f"{num_diffusion_inversion_steps}_inversion_steps.png") for x in os.listdir(out_dir) if
-             x.startswith("diffusion_inversion_target_") and osp.isdir(osp.join(out_dir, x))]
+    diff_paths = [
+        osp.join(out_dir, x, f"{num_diffusion_inversion_steps}_inversion_steps.png")
+        for x in os.listdir(out_dir)
+        if x.startswith("diffusion_inversion_target_")
+        and osp.isdir(osp.join(out_dir, x))
+    ]
     for i in range(0, len(diff_paths), max_images_per_collage):
-        collage_data = diff_paths[i:i + max_images_per_collage]
-        diff_collage = create_collage(collage_data, out_dir=plots_dir, out_name_prefix=f"diffusion_{i}_", collage_size=(2,5))
+        collage_data = diff_paths[i : i + max_images_per_collage]
+        create_collage(
+            collage_data,
+            out_dir=plots_dir,
+            out_name_prefix=f"diffusion_{i}_",
+            collage_size=(2, 5),
+        )
 
-    source_paths = [osp.join(out_dir, x, "input.png") for x in os.listdir(out_dir) if
-             x.startswith("diffusion_inversion_target_") and osp.isdir(osp.join(out_dir, x))]
-    for i in range(0, len(source_paths), max_images_per_collage):
-        collage_data = source_paths[i:i + max_images_per_collage]
-        source_collage = create_collage(collage_data, out_dir=plots_dir, out_name_prefix=f"source_{i}_", collage_size=(2,5))
+    ref_paths = [
+        osp.join(out_dir, x, "input.png")
+        for x in os.listdir(out_dir)
+        if x.startswith("diffusion_inversion_target_")
+        and osp.isdir(osp.join(out_dir, x))
+    ]
+    for i in range(0, len(ref_paths), max_images_per_collage):
+        collage_data = ref_paths[i : i + max_images_per_collage]
+        create_collage(
+            collage_data,
+            out_dir=plots_dir,
+            out_name_prefix=f"ref_{i}_",
+            collage_size=(2, 5),
+        )
 
 
-def calculate_psnr(image1, image2, device='cuda'):
-    to_tensor_transform = transforms.Compose([transforms.ToTensor()])
-    mse_loss = nn.MSELoss()
-    max_value = 1.0
-    if isinstance(image1, Image.Image):
-        image1 = to_tensor_transform(image1).to(device)
-    if isinstance(image2, Image.Image):
-        image2 = to_tensor_transform(image2).to(device)
-
-    mse = mse_loss(image1, image2)
-    psnr = 10 * torch.log10(max_value ** 2 / mse).item()
-    return psnr
-
-def analyze_z_T(args, src_img_indices, target_img_indices, out_dir, plots_dir, original_images_dir, control_group=False, target_prompts=None):
-
-    prefix = f"z_T_target_" if not control_group else f"z_T_source_"
+def analyze_z_T(
+    args,
+    ref_img_indices,
+    target_img_indices,
+    out_dir,
+    plots_dir,
+    original_images_dir,
+    control_group=False,
+    target_prompts=None,
+):
+    """
+    Analyzes the latent representations and reconstructed images for a set of ref or target images.
+    Args:
+        args: Arguments containing various settings and configurations.
+        ref_img_indices (list): List of indices for ref images.
+        target_img_indices (list): List of indices for target images.
+        out_dir (str): Directory where output files are stored.
+        plots_dir (str): Directory where plots will be saved.
+        original_images_dir (str): Directory containing the original images.
+        control_group (bool, optional): If True, analyze ref images; otherwise, analyze target images. Default is False.
+        target_prompts (list, optional): List of prompts for target images to calculate CLIP similarities. Default is None.
+    Returns:
+        dict: A dictionary containing the following keys:
+            - "nll_values" (list): Negative log-likelihood values for the latent representations.
+            - "psnrs" (list): Peak signal-to-noise ratio values for the reconstructed images.
+            - "clip_similarities" (list): CLIP similarity scores for the reconstructed images (only for target images).
+    """
+    prefix = "z_T_target_" if not control_group else "z_T_ref_"
     if not control_group:
         indices = target_img_indices
     else:
-        indices = src_img_indices
-    latents = [torch.load(os.path.join(out_dir, f"{prefix}{image_idx}.pth")) for image_idx in indices]
+        indices = ref_img_indices
+    latents = [
+        torch.load(os.path.join(out_dir, f"{prefix}{image_idx}.pth"))
+        for image_idx in indices
+    ]
 
     nll_values = []
     # need to plot something nicer
     for k in latents:
         nll_values.append(tensor_to_nll(k))
     if not control_group:
-        analyze_nll_values(nll_values, plots_dir=plots_dir, show_figures=args.show_figures)
+        analyze_nll_values(
+            nll_values, plots_dir=plots_dir, show_figures=args.show_figures
+        )
     else:
-        analyze_nll_values(nll_values, plots_dir=plots_dir, out_name_prefix="control_group_", show_figures=args.show_figures)
+        analyze_nll_values(
+            nll_values,
+            plots_dir=plots_dir,
+            out_name_prefix="control_group_",
+            show_figures=args.show_figures,
+        )
 
     psnrs = []
     clip_similarities = []
     for image_idx, image_name in enumerate(indices):
         if not control_group:
-            original_image_path = os.path.join(original_images_dir, f'target_{image_idx}.png')
-            reconstructed_image_path = os.path.join(out_dir, f"diffusion_inversion_target_{image_idx}",
-                                                    f'{args.num_diffusion_inversion_steps}_inversion_steps.png')
+            original_image_path = os.path.join(
+                original_images_dir, f"target_{image_idx}.png"
+            )
+            reconstructed_image_path = os.path.join(
+                out_dir,
+                f"diffusion_inversion_target_{image_idx}",
+                f"{args.num_diffusion_inversion_steps}_inversion_steps.png",
+            )
             if target_prompts:
-                clip_similarities.append(clip_similarity(reconstructed_image_path, target_prompts[image_idx]))
+                clip_similarities.append(
+                    clip_similarity(reconstructed_image_path, target_prompts[image_idx])
+                )
         else:
-            original_image_path = osp.join(original_images_dir, f'source_{image_idx}.png')
-            reconstructed_image_path = os.path.join(out_dir, f"diffusion_inversion_source_{image_idx}",
-                                                    f'{args.num_diffusion_inversion_steps}_inversion_steps.png')
+            original_image_path = osp.join(
+                original_images_dir, f"ref_{image_idx}.png"
+            )
+            reconstructed_image_path = os.path.join(
+                out_dir,
+                f"diffusion_inversion_ref_{image_idx}",
+                f"{args.num_diffusion_inversion_steps}_inversion_steps.png",
+            )
         original_image = Image.open(original_image_path)
         reconstructed_image = Image.open(reconstructed_image_path)
         psnr = calculate_psnr(original_image, reconstructed_image)
@@ -407,35 +515,20 @@ def analyze_z_T(args, src_img_indices, target_img_indices, out_dir, plots_dir, o
     if not control_group:
         analyze_psnr_values(psnrs, plots_dir, show_figures=args.show_figures)
     else:
-        analyze_psnr_values(psnrs, plots_dir, out_name_prefix="control_group_", show_figures=args.show_figures)
+        analyze_psnr_values(
+            psnrs,
+            plots_dir,
+            out_name_prefix="control_group_",
+            show_figures=args.show_figures,
+        )
 
     results = {
         "nll_values": nll_values,
         "psnrs": psnrs,
-        "clip_similarities": clip_similarities
+        "clip_similarities": clip_similarities,
     }
 
     return results
-
-
-class CaptionsPaths:
-    def __init__(self, root, *args, **kwargs):
-        self.root = root
-        images_in_nudity_dataset = os.listdir(osp.join(root, "imgs"))
-        images_in_nudity_dataset.sort()
-        all_images_indices = [int(p.replace('_0.png', '')) for p in images_in_nudity_dataset]
-        prompts_file_path = osp.join(root, "prompts.csv")
-        assert osp.isfile(prompts_file_path), f"Prompts file not found at {prompts_file_path}"
-        prompts_df = pd.read_csv(prompts_file_path)
-        idx_to_prompt = lambda image_idx: prompts_df[prompts_df["case_number"] == image_idx].iloc[0].prompt
-        self.images_paths = [osp.join(root, "imgs", x) for x in images_in_nudity_dataset]
-        self.prompts = [idx_to_prompt(idx) for idx in all_images_indices]
-
-    def __len__(self):
-        return len(self.images_paths)
-
-    def __getitem__(self, item):
-        return (self.images_paths[item], self.prompts[item])
 
 
 class NumpyEncoder(json.JSONEncoder):
@@ -446,31 +539,39 @@ class NumpyEncoder(json.JSONEncoder):
 
 
 def write_results_into_json(results_target, results_control_group):
-    psnr_json = {'tsi_goal_psnrs': results_target['psnrs'],
-                 'tsi_control_group_psnrs': results_control_group['psnrs'],
-                 'mean_tsi_goal_psnrs': np.mean(results_target['psnrs']),
-                 'mean_tsi_control_group_psnrs': np.mean(results_control_group['psnrs']) }
+    psnr_json = {
+        "tsi_goal_psnrs": results_target["psnrs"],
+        "tsi_control_group_psnrs": results_control_group["psnrs"],
+        "mean_tsi_goal_psnrs": np.mean(results_target["psnrs"]),
+        "mean_tsi_control_group_psnrs": np.mean(results_control_group["psnrs"]),
+    }
 
-    nll_json = {'goal_nlls': results_target['nll_values'], 'control_group_nlls': results_control_group['nll_values'],
-                'mean_goal_nlls': np.mean(results_target['nll_values']),
-                'std_goal_nlls': np.std(results_target['nll_values']),
-                'mean_control_group_nlls': np.mean(results_control_group['nll_values']),
-                'std_control_group_nlls': np.std(results_control_group['nll_values'])}
+    nll_json = {
+        "goal_nlls": results_target["nll_values"],
+        "control_group_nlls": results_control_group["nll_values"],
+        "mean_goal_nlls": np.mean(results_target["nll_values"]),
+        "std_goal_nlls": np.std(results_target["nll_values"]),
+        "mean_control_group_nlls": np.mean(results_control_group["nll_values"]),
+        "std_control_group_nlls": np.std(results_control_group["nll_values"]),
+    }
 
-    detection_json = results_target['success_rate']
-    emd_json = results_target['emd_scores']
+    detection_json = results_target["success_rate"]
+    emd_json = results_target["emd_scores"]
 
-    clip_json = {'clip_similarities': results_target['clip_similarities'],
-                 'mean_clip_similarity': np.mean(results_target['clip_similarities'])}
+    clip_json = {
+        "clip_similarities": results_target["clip_similarities"],
+        "mean_clip_similarity": np.mean(results_target["clip_similarities"]),
+    }
 
     out_json = {}
-    out_json['psnr'] = psnr_json
-    out_json['nll'] = nll_json
-    out_json['detection'] = detection_json
-    out_json['emd'] = emd_json
-    out_json['clip'] = clip_json
+    out_json["psnr"] = psnr_json
+    out_json["nll"] = nll_json
+    out_json["detection"] = detection_json
+    out_json["emd"] = emd_json
+    out_json["clip"] = clip_json
 
     return out_json
+
 
 if __name__ == "__main__":
     # Load the pre-trained Stable Diffusion model
@@ -480,14 +581,14 @@ if __name__ == "__main__":
     scheduler = DDIMScheduler.from_config(model_id, subfolder="scheduler")
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    source_ds = CocoCaptions17Paths(args.source_dataset_root, train=False)
+    ref_ds = CocoCaptions17Paths(args.reference_dataset_root, train=False)
     target_ds = CaptionsPaths(args.dataset_root, train=False)
 
     if args.image_indices is None:
         args.image_indices = list(range(len(target_ds)))
-    if args.num_src_images is None:
-        args.num_src_images = len(target_ds)
-
+    if args.num_ref_images is None:
+        args.num_ref_images = len(target_ds)
+    
     with open(osp.join(args.out_dir, "args.json"), "w") as f:
         yaml.dump(vars(args), f, default_flow_style=False)
 
@@ -495,73 +596,112 @@ if __name__ == "__main__":
     all_psnrs = []
     all_control_group_psnrs = []
 
-    pipe = StableDiffusionPipelineUnlikelyImages.from_pretrained(model_id, safety_checker=None, scheduler=scheduler)
-
-    if args.tamed_vae_path:
-        pipe.vae.load_state_dict(torch.load(args.tamed_vae_path))
+    pipe = StableDiffusionPipeline.from_pretrained(
+        model_id, safety_checker=None, scheduler=scheduler
+    )
 
     if args.ablated_model:
         pipe.unet.load_state_dict(torch.load(args.ablated_model))
 
     if args.ablated_text_encoder:
         assert args.ablated_concept_name, "Ablated concept name must be provided"
-        pipe.text_encoder.from_pretrained(args.ablated_text_encoder, subfolder=f"{args.ablated_concept_name}_unlearned")
+        pipe.text_encoder = CLIPTextModel.from_pretrained(
+            args.ablated_text_encoder,
+            subfolder=f"{args.ablated_concept_name}_unlearned",
+        )
     pipe = pipe.to(device)
-    src_img_indices = []
-    src_imgs_list = []
+    ref_img_indices = []
+    ref_imgs_list = []
     target_imgs_list = []
     target_prompts = []
     out_dir = args.out_dir
 
-    for img_num in range(args.num_src_images):
-        src_index = img_num
-        image_path, prompt = source_ds[src_index]
+    for img_num in range(args.num_ref_images):
+        ref_index = img_num
+        image_path, prompt = ref_ds[ref_index]
         image = Image.open(image_path)
         image = image.resize((512, 512))
-        image_path = osp.join(out_dir, "original", f'source_{src_index}.png')
+        image_path = osp.join(out_dir, "original", f"ref_{ref_index}.png")
         os.makedirs(osp.dirname(image_path), exist_ok=True)
         image.save(image_path)
-        src_imgs_list.append(image)
-        src_img_indices.append(src_index)
+        ref_imgs_list.append(image)
+        ref_img_indices.append(ref_index)
 
     for target_index in args.image_indices:
         image_path, prompt = target_ds[target_index]
         image = Image.open(image_path)
         image = image.resize((512, 512))
-        image_path = osp.join(out_dir, "original", f'target_{target_index}.png')
+        image_path = osp.join(out_dir, "original", f"target_{target_index}.png")
         os.makedirs(osp.dirname(image_path), exist_ok=True)
         image.save(image_path)
         target_imgs_list.append(image)
         target_prompts.append(prompt)
 
-    test_out_dir = os.path.join(out_dir, f"hard_to_forget_diffusion_{args.num_diffusion_inversion_steps}")
+    test_out_dir = os.path.join(
+        out_dir, f"hard_to_forget_diffusion_{args.num_diffusion_inversion_steps}"
+    )
     os.makedirs(test_out_dir, exist_ok=True)
     plots_dir = osp.join(test_out_dir, "plots")
     os.makedirs(plots_dir, exist_ok=True)
     if not args.analyze_only:
-        diffusion_inversion(pipe, test_out_dir, target_ds, args.image_indices, num_diffusion_inversion_steps=args.num_diffusion_inversion_steps, inversion_method=args.diffusion_inversion_method)
-        store_z_T_of_src_imgs_from_encoder(pipe, test_out_dir, source_ds, src_img_indices,
-                                            num_diffusion_inversion_steps=args.num_diffusion_inversion_steps,
-                                            inversion_method=args.diffusion_inversion_method)
-    results_target = analyze_z_T(args, src_img_indices, args.image_indices, test_out_dir, plots_dir, osp.join(out_dir, "original"), target_prompts=target_prompts)
-    results_control_group = analyze_z_T(args, src_img_indices, args.image_indices, test_out_dir, plots_dir, osp.join(out_dir, "original"), control_group=True)
-    create_all_collages(test_out_dir, plots_dir, num_diffusion_inversion_steps=args.num_diffusion_inversion_steps)
-    emd_scores = analyze_goal_source_normal_nll_values(results_target['nll_values'], results_control_group['nll_values'],
-                         label_1=r"NLL of diffusion inversion of targets",
-                         label_2=r"NLL of diffusion inversion of sources",
-                         label_3=r"Random normal samples",
-                         plots_dir=plots_dir)
-    post_attack_success_rate = detect_concept_post_attack(out_dir, with_vae=False)
-    # this function sets torch seed:
-    pre_attack_success_rate = detect_concept_pre_attack(pipe, args)
-    results_target['success_rate'] = {'pre_attack_success_rate': pre_attack_success_rate, 'post_attack_success_rate': post_attack_success_rate}
-    results_target['emd_scores'] = emd_scores
-    all_psnrs.extend(results_target['psnrs'])
-    all_control_group_psnrs.extend(results_control_group['psnrs'])
+        diffusion_inversion(
+            pipe,
+            test_out_dir,
+            target_ds,
+            args.image_indices,
+            num_diffusion_inversion_steps=args.num_diffusion_inversion_steps,
+            inversion_method=args.diffusion_inversion_method,
+        )
+        store_z_T_of_ref_imgs_from_encoder(
+            pipe,
+            test_out_dir,
+            ref_ds,
+            ref_img_indices,
+            num_diffusion_inversion_steps=args.num_diffusion_inversion_steps,
+            inversion_method=args.diffusion_inversion_method,
+        )
+    results_target = analyze_z_T(
+        args,
+        ref_img_indices,
+        args.image_indices,
+        test_out_dir,
+        plots_dir,
+        osp.join(out_dir, "original"),
+        target_prompts=target_prompts,
+    )
+    results_control_group = analyze_z_T(
+        args,
+        ref_img_indices,
+        args.image_indices,
+        test_out_dir,
+        plots_dir,
+        osp.join(out_dir, "original"),
+        control_group=True,
+    )
+    create_all_collages(
+        test_out_dir,
+        plots_dir,
+        num_diffusion_inversion_steps=args.num_diffusion_inversion_steps,
+    )
+    emd_scores = analyze_goal_reference_normal_nll_values(
+        results_target["nll_values"],
+        results_control_group["nll_values"],
+        label_1=r"NLL of diffusion inversion of targets",
+        label_2=r"NLL of diffusion inversion of references",
+        label_3=r"Random normal samples",
+        plots_dir=plots_dir,
+    )
+    post_analysis_success_rate = detect_concept_post_analysis(out_dir, with_vae=False, concept_name=args.ablated_concept_name)
+    results_target["success_rate"] = {
+        "post_analysis_success_rate": post_analysis_success_rate,
+    }
+    results_target["emd_scores"] = emd_scores
+    all_psnrs.extend(results_target["psnrs"])
+    all_control_group_psnrs.extend(results_control_group["psnrs"])
 
     out_json = write_results_into_json(results_target, results_control_group)
-    out_json['source_indices'] = src_img_indices
-    out_json['target_indices'] = args.image_indices
+    out_json["ref_indices"] = ref_img_indices
+    out_json["target_indices"] = args.image_indices
 
     with open(osp.join(args.out_dir, "results.json"), "w") as f:
         json.dump(out_json, f, cls=NumpyEncoder)

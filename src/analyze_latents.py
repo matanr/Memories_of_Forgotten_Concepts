@@ -96,11 +96,13 @@ def analyze_nll_values(nll_values, plots_dir=None, out_name_prefix="", show_figu
 
 
 def calculate_emd(mean1, var1, mean2, var2):
+    """ Calculate and return the Earth Mover's Distance (EMD) between two normal distributions.
+    """
     # Compute EMD for scalar values
     emd = (mean1 - mean2)**2 + var1 + var2 - 2 * np.sqrt(var1 * var2)
     return emd
 
-def analyze_goal_source_normal_nll_values(nll_values_1, nll_values_2, label_1="Distribution 1",
+def analyze_goal_reference_normal_nll_values(nll_values_1, nll_values_2, label_1="Distribution 1",
                          label_2="Distribution 2", label_3=None, plots_dir=None,
                          out_name_prefix="", show_figures=False):
     """
@@ -180,6 +182,22 @@ def analyze_goal_source_normal_nll_values(nll_values_1, nll_values_2, label_1="D
 
 # Helper function to compute SSIM between two images
 def ssim(img1, img2, window_size=11, size_average=True, val_range=None):
+    """
+    Compute the Structural Similarity Index (SSIM) between two images.
+
+    SSIM is a perceptual metric that quantifies image quality degradation 
+    caused by processing such as data compression or by losses in data transmission.
+
+    Parameters:
+    img1 (torch.Tensor): The first image tensor. Can be a 2D (grayscale), 3D (single-channel batch), or 4D (multi-channel batch) tensor.
+    img2 (torch.Tensor): The second image tensor. Must have the same dimensions as img1.
+    window_size (int, optional): The size of the Gaussian window used for SSIM calculation. Default is 11.
+    size_average (bool, optional): If True, the SSIM values are averaged over the batch. Default is True.
+    val_range (float, optional): The value range of the input images (max - min). If None, it is computed from img1.
+
+    Returns:
+    torch.Tensor: The computed SSIM index. If size_average is True, returns a scalar value. Otherwise, returns a tensor of SSIM values for each image in the batch.
+    """
     # Get the number of channels
     if len(img1.shape) == 2:  # Grayscale case
         img1 = img1.unsqueeze(0).unsqueeze(0)  # Add channel and batch dimensions
