@@ -9,15 +9,12 @@
 
   <title>Memories of Forgotten Concepts</title>
 
-  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
-        rel="stylesheet">
+  <link rel="preload" href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" >
+  <link rel="preload" href="./project_page_data/css/bulma.min.css">
+  <link rel="preload" href="./project_page_data/css/index.css">
 
   <link rel="stylesheet" href="./project_page_data/css/bulma.min.css">
-  <link rel="stylesheet" href="./project_page_data/css/bulma-carousel.min.css">
-  <link rel="stylesheet" href="./project_page_data/css/bulma-slider.min.css">
-  <link rel="stylesheet" href="./project_page_data/css/fontawesome.all.min.css">
-  <link rel="stylesheet"
-        href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" >
   <link rel="stylesheet" href="./project_page_data/css/index.css">
   <link rel="icon" href="./project_page_data/images/logo.svg">
   <link rel="preload" as="image" href="project_page_data/images/concept_level_flow.webp">
@@ -25,18 +22,10 @@
   <link rel="preload" as="image" href="project_page_data/images/sphere.webp">
   <link rel="preload" as="image" href="project_page_data/images/teaser.webp">
   <link rel="preload" as="image" href="project_page_data/images/uni.svg">
-
-  <link href="https://use.fontawesome.com/releases/v5.0.1/css/all.css" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/bulma-slider@2.0.5/dist/css/bulma-slider.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma-carousel@4.0.3/dist/css/bulma-carousel.min.css">
   <link rel="preload" href="./project_page_data/js/index.js" as="font">
 
-  <script defer src="./project_page_data/js/bulma-carousel.min.js"></script>
-  <script defer src="./project_page_data/js/bulma-slider.min.js"></script>
-  <script defer src="./project_page_data/js/index.js"></script>
   <script defer src="./project_page_data/js/fontawesome.all.min.js"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js" async></script>
-  <script src="load-mathjax.js" async></script>
+  <script src="project_page_data/js/load-mathjax.js" async></script>
 </head>
 <body>
 
@@ -59,7 +48,7 @@
             </span>
             and
             <span class="author-block">
-              <a target="_blank" href="http://www.eng.tau.ac.il/~avidan/">Shai Avidan</a><sup>1</sup>,</span>
+              <a target="_blank" href="https://www.eng.tau.ac.il/~avidan/">Shai Avidan</a><sup>1</sup>,</span>
 
           </div>
 
@@ -85,7 +74,7 @@
               </span>
 
               <span class="link-block">
-                <!-- Add link to code on github here -->
+                <!-- Add link to code on Github here -->
                 <a href="https://github.com/matanr/Memories_of_Forgotten_Concepts/"
                    target="_blank"
                    class="external-link button is-normal is-rounded is-dark" aria-label="Code implementation">
@@ -162,10 +151,10 @@
       <div class="column is-four-fifths">
         <h2 class="title is-3">Analysis</h2>
         <div class="description">
-          <pr>
+          <p>
             Starting with an image from the erased concept, we use image inversion to find a latent seed that generates the image.
             We explore how likely this latent is, along with the reconstruction error (PSNR) of the image using the latent and the diffusion model.
-          </pr>
+          </p>
         </div>
           <img src="./project_page_data/images/concept_level_flow.webp" class="is-responsive" alt="Analysis using inversion" height="218" width="793">
         <br>
@@ -180,10 +169,10 @@
     <div class="columns is-centered has-text-centered">
       <div class="column is-four-fifths">
         <div class="description">
-          <pr>
+          <p>
             We can also retrieve multiple distant latents that can generate a given image.
             This is done by inverting the diffusion model's decoder with different initializations (using arbitrary non erased images \( \mathcal{I}_{s_i} \)) before we perform image inversion.
-          </pr>
+          </p>
           <br>
 
         </div>
@@ -224,7 +213,7 @@
 <!--  <span class="hljs-attr">year={2024},</span>-->
 <!--  <span class="hljs-attr">pages={4644-4654}</span>-->
 <!--}-->
-</code></pre>
+</pre>
       </div>
   </div>
   </div>
@@ -234,7 +223,7 @@
 <footer class="footer">
   <div class="container">
     <div class="content has-text-centered">
-      <a class="icon-link" href="https://github.com/ShimonMalnick/Taming_a_Generative_Model" class="external-link" disabled>
+      <a target="_blank" class="icon-link external-link" href="https://github.com/matanr/Memories_of_Forgotten_Concepts" aria-label="Code implementation">
         <i class="fab fa-github"></i>
       </a>
     </div>
@@ -243,7 +232,7 @@
         <div class="content">
           <p>
             This website is licensed under a <a rel="license"
-                                                href="http://creativecommons.org/licenses/by-sa/4.0/">Creative
+                                                href="https://creativecommons.org/licenses/by-sa/4.0/">Creative
             Commons Attribution-ShareAlike 4.0 International License</a>.
           </p>
           <p>
