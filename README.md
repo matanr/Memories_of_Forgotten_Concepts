@@ -29,9 +29,83 @@ Memories of Forgotten Concepts
 Official implementation of the paper:
  <a href=""> Memories of Forgotten Concepts</a>
 <br>
-The code will be uploaded soon.
+
 </div>
 
 # BibTex
 ```bib
 ```
+
+# Getting Started
+## Requirments:
+1. Please download [mscoco17](https://cocodataset.org/#download).
+2. Please download the ablated models (Links for [[Object](https://drive.google.com/file/d/1e5aX8gkC34YaHGR0S1-EQwBmUXiAPvpE/view), [Others](https://drive.google.com/file/d/1yeZNJ8MoHsisdZmt5lbnG_kSgl5xned0/view)]).
+3. Please generate the datasets of the erased concepts using the appropriate csv file. For example, to generate the Nudity dataset:
+```shell
+cd Memories_of_Forgotten_Concepts
+export CONCEPT=nudity
+export PROMPT_FILE=./prompts/${CONCEPT}.csv
+export SAVE_PATH=./datasets
+mkdir -p $SAVE_PATH
+python src/generate_dataset.py --prompts_path ${PROMPT_FILE} --concept ${CONCEPT} --save_path ${SAVE_PATH} --device cuda:0
+```
+4. Please download the [style classifier](https://drive.google.com/file/d/1me_MOrXip1Xa-XaUrPZZY7i49pgFe1po/view) for detection of the Van Gogh concept. Add an environemnt variable for the classifier:
+```shell
+export STYLE_CLASSIFIER_DIR=/path/to/cls/dir
+```
+
+## Setup Environment
+### Conda + pip
+create an environemnt using the supplied requirements.txt file:
+```shell
+git clone https://github.com/matanr/Memories_of_Forgotten_Concepts
+cd Memories_of_Forgotten_Concepts
+conda create -n mem python=3.10
+conda activate mem
+pip install -r requirements.txt
+```
+
+### [Docker Setup Information](docker/DOCKER-INFO.md)
+
+## Running
+Make sure the outputs directory contains the concept name in either configuration:
+```shell
+export CONCEPT="<nudity/vangogh/church/garbage_truck/tench/parachute>"
+export OUTDIR=./outputs/many_${CONCEPT}
+```
+### Concept-Level
+Perform a concept-level analysis (example for the 'Nudity' concept):
+
+```shell
+python memory_of_an_ablated_concept.py 
+--reference_dataset_root <path to mscoco17>
+--out_dir $OUTDIR
+--ablated_concept_name $CONCEPT
+--dataset_root <path to the dataset of images of ablated_concept_name>
+--diffusion_inversion_method <renoise/nti>
+--num_diffusion_inversion_steps <default is 50>
+--ablated_model <for all models except for AdvUnlearn include this parameter with the path to the ablated model, otherwise ignore this parameter>
+--ablated_text_encoder <for AdvUnlearn include this parameter with: OPTML-Group/AdvUnlearn, otherwise ignore this parameter>
+```
+
+### Image-Level
+Perform an image-level analysis:
+```shell
+python many_memories_of_an_ablated_image.py 
+--reference_dataset_root <path to mscoco17>
+--out_dir $OUTDIR
+--ablated_concept_name $CONCEPT
+--dataset_root <path to the dataset of images of ablated_concept_name>
+--num_vae_inversion_steps <default is 3000>
+--diffusion_inversion_method <renoise/nti>
+--num_diffusion_inversion_steps <default is 50>
+--ablated_model <for all models except for AdvUnlearn include this parameter with the path to the ablated model, otherwise ignore this parameter>
+--ablated_text_encoder <for AdvUnlearn include this parameter with: OPTML-Group/AdvUnlearn, otherwise ignore this parameter>
+```
+
+# BibTex
+```bib
+```
+
+# Acknowlegments
+This repository is built upon and incorporates code from [Diffusion-MU-Attack](https://github.com/OPTML-Group/Diffusion-MU-Attack), [AdvUnlearn](https://github.com/OPTML-Group/AdvUnlearn) and [Renoise](https://github.com/garibida/ReNoise-Inversion).

@@ -1,10 +1,19 @@
-import matplotlib.pyplot as plt
-import numpy as np
 import torch
 
 
 @torch.no_grad()
 def ddim_inversion(latents, encoder_hidden_states, noise_scheduler, unet):
+    """
+    Perform DDIM (Denoising Diffusion Implicit Models) inversion on the given latents.
+    Args:
+        latents (torch.Tensor): The initial latent tensor.
+        encoder_hidden_states (torch.Tensor): The hidden states from the encoder.
+        noise_scheduler (object): An object that manages the noise scheduling and scaling.
+        unet (object): The U-Net model used for noise prediction.
+    Returns:
+        list: A list of tensors representing the latents at each timestep during the inversion process.
+    """
+    
     next_latents = latents
     all_latents = [latents.detach().cpu()]
 
@@ -35,12 +44,27 @@ def null_text_inversion(
     prompt,
     num_opt_steps=15,
     lr=0.01,
-    tol=1e-5,
     guidance_scale=7.5,
     eta: float = 0.0,
     generator=None,
     device=None,
 ):
+    """
+    Perform null text inversion to optimize null text embeddings for a given prompt.
+    Args:
+        pipe: The pipeline object containing the tokenizer, text encoder, unet, scheduler, and other components.
+        all_latents: A list of latent representations at different timesteps.
+        prompt: The text prompt for which the null text embeddings are optimized.
+        num_opt_steps (int, optional): Number of optimization steps for each timestep. Default is 15.
+        lr (float, optional): Learning rate for the optimizer. Default is 0.01.
+        guidance_scale (float, optional): Scale for classifier-free guidance. Default is 7.5.
+        eta (float, optional): Parameter for controlling the amount of noise. Default is 0.0.
+        generator (optional): Random number generator for reproducibility. Default is None.
+        device (optional): Device to perform computations on. Default is None.
+    Returns:
+        tuple: A tuple containing the final latent representation and a list of optimized null text embeddings.
+    """
+    
     # initialise null text embeddings
     null_text_prompt = ""
     null_text_input = pipe.tokenizer(
@@ -51,7 +75,6 @@ def null_text_inversion(
         return_tensors="pt",
     )
 
-    # prepare for optimising
     null_text_embeddings = torch.nn.Parameter(
         pipe.text_encoder(null_text_input.input_ids.to(pipe.device))[0],
         requires_grad=True,
@@ -59,15 +82,12 @@ def null_text_inversion(
     null_text_embeddings = null_text_embeddings.detach()
     null_text_embeddings.requires_grad_(True)
 
-    # Initialize the optimizer
     optimizer = torch.optim.Adam(
         [null_text_embeddings],  # only optimize the embeddings
         lr=lr,
     )
 
-    # step_ratio = pipe.scheduler.config.num_train_timesteps // pipe.scheduler.num_inference_steps
     text_embeddings = pipe.encode_prompt(prompt, device, 1, False, None)[0].detach()
-    # input_embeddings = torch.cat([null_text_embeddings, text_embeddings], dim=0)
     extra_step_kwargs = pipe.prepare_extra_step_kwargs(generator, eta)
     all_null_texts = []
     latents = all_latents[-1]
@@ -77,7 +97,6 @@ def null_text_inversion(
     ):
         prev_latents = prev_latents.to(pipe.device).detach()
 
-        # expand the latents if we are doing classifier free guidance
         latent_model_input = pipe.scheduler.scale_model_input(
             latents, timestep
         ).detach()
@@ -121,12 +140,24 @@ def reconstruct(
     eta=0.0,
     device=None,
 ):
+    """
+    Reconstructs an image from latent representations using a text prompt and a diffusion pipeline.
+    Args:
+        pipe (DiffusionPipeline): The diffusion pipeline used for encoding and decoding.
+        latents (torch.Tensor): The initial latent representations.
+        prompt (str): The text prompt used for generating the image.
+        null_text_embeddings (torch.Tensor): The embeddings for the null text used in classifier-free guidance.
+        guidance_scale (float, optional): The scale for classifier-free guidance. Default is 7.5.
+        generator (torch.Generator, optional): The random number generator for reproducibility. Default is None.
+        eta (float, optional): The eta parameter for the scheduler. Default is 0.0.
+        device (torch.device, optional): The device to run the computations on. Default is None.
+    Returns:
+        torch.Tensor: The reconstructed image.
+    """
     text_embeddings = pipe.encode_prompt(prompt, device, 1, False, None)[0]
     extra_step_kwargs = pipe.prepare_extra_step_kwargs(generator, eta)
     latents = latents.to(pipe.device)
-    for i, (t, null_text_t) in enumerate(
-        pipe.progress_bar(zip(pipe.scheduler.timesteps, null_text_embeddings))
-    ):
+    for t, null_text_t in pipe.progress_bar(zip(pipe.scheduler.timesteps, null_text_embeddings)):
         # expand the latents if we are doing classifier free guidance
         latent_model_input = torch.cat([latents] * 2)
         latent_model_input = pipe.scheduler.scale_model_input(latent_model_input, t)
