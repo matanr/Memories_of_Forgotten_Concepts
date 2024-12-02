@@ -94,7 +94,7 @@ def validate_and_get_args():
         "--image_indices",
         type=int,
         nargs="+",
-        default=[0],
+        default=None,
         help="indices of images to perform nti on. This index is the relative index of the image in the dataset directory",
     )
     parser.add_argument(
@@ -146,7 +146,7 @@ def validate_and_get_args():
     parser.add_argument('--image_type', type=str, default='coco', help="Type of image to generate")
     parser.add_argument('--diffusion_inversion_method', type=str, default='renoise', help="Diffusion inversion method. Valid options are 'nti' and 'renoise'")
 
-    parser.add_argument('--num_src_images', type=int, default=10, help="Number of source images")
+    parser.add_argument('--num_src_images', type=int, default=None, help="Number of source images")
 
     parser.add_argument('--show_figures', default=False, action='store_true', help="Show figures")
     parser.add_argument('--analyze_only', default=False, action='store_true', help="Analyze only, do not find latents")
@@ -482,7 +482,12 @@ if __name__ == "__main__":
 
     source_ds = CocoCaptions17Paths(args.source_dataset_root, train=False)
     target_ds = CaptionsPaths(args.dataset_root, train=False)
-    
+
+    if args.image_indices is None:
+        args.image_indices = list(range(len(target_ds)))
+    if args.num_src_images is None:
+        args.num_src_images = len(target_ds)
+
     with open(osp.join(args.out_dir, "args.json"), "w") as f:
         yaml.dump(vars(args), f, default_flow_style=False)
 

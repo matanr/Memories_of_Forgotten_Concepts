@@ -92,7 +92,7 @@ def validate_and_get_args():
         "--image_indices",
         type=int,
         nargs="+",
-        default=[0],
+        default=[0, 1, 2, 3, 4],
         help="indices of images to perform nti on. This index is the relative index of the image in the dataset directory",
     )
     parser.add_argument(
@@ -143,7 +143,7 @@ def validate_and_get_args():
     parser.add_argument('--image_type', type=str, default='coco', help="Type of image to generate")
     parser.add_argument('--diffusion_inversion_method', type=str, default='renoise', help="Diffusion inversion method. Valid options are 'nti' and 'renoise'")
     
-    parser.add_argument('--num_vae_inversion_steps', type=int, default=1000, help="Number of VAE inversion steps")
+    parser.add_argument('--num_vae_inversion_steps', type=int, default=3000, help="Number of VAE inversion steps")
 
     parser.add_argument('--num_src_images', type=int, default=10, help="Number of source images")
 
