@@ -17,5 +17,4 @@ onnxruntime==1.20.1
 scikit-learn==1.5.2
 pandas==2.2.3
 huggingface-hub==0.24.0
-nudenet==3.4.2
 pyrallis==0.3.1

@@ -229,7 +229,7 @@ def detect_nudity_from_dir(out_dir, with_vae=True):
         reconstructions_paths = glob(
             os.path.join(
                 out_dir,
-                "hard_to_forget_vae_*_diffusion_*/diffusion_inversion_target_start_from_source_*/*_inversion_steps.png",
+                "hard_to_forget_vae_*_diffusion_*/diffusion_inversion_target_start_from_reference_*/*_inversion_steps.png",
             )
         )
         sub_dir = glob(os.path.join(out_dir, "hard_to_forget_vae_*_diffusion_*"))[0]
@@ -330,7 +330,7 @@ def detect_object_from_dir(out_dir, with_vae=True, concept_name=None):
         reconstructions_paths = glob(
             os.path.join(
                 out_dir,
-                "hard_to_forget_vae_*_diffusion_*/diffusion_inversion_target_start_from_source_*/*_inversion_steps.png",
+                "hard_to_forget_vae_*_diffusion_*/diffusion_inversion_target_start_from_reference_*/*_inversion_steps.png",
             )
         )
         sub_dir = glob(os.path.join(out_dir, "hard_to_forget_vae_*_diffusion_*"))[0]
@@ -444,7 +444,7 @@ def detect_vangogh_from_dir(
         reconstructions_paths = glob(
             os.path.join(
                 out_dir,
-                "hard_to_forget_vae_*_diffusion_*/diffusion_inversion_target_start_from_source_*/*_inversion_steps.png",
+                "hard_to_forget_vae_*_diffusion_*/diffusion_inversion_target_start_from_reference_*/*_inversion_steps.png",
             )
         )
         sub_dir = glob(os.path.join(out_dir, "hard_to_forget_vae_*_diffusion_*"))[0]

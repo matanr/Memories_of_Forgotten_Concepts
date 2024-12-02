@@ -1,7 +1,7 @@
 import numpy as np
 import torch
 from diffusers import StableDiffusionPipeline, DDIMScheduler
-from nudenet import NudeDetector
+from src.tasks.utils.metrics.nudenet import NudeDetector
 from tqdm.auto import tqdm
 from transformers import AutoImageProcessor, ResNetForImageClassification
 from transformers import pipeline

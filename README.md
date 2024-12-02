@@ -59,7 +59,7 @@ export STYLE_CLASSIFIER_DIR=/path/to/cls/dir
 create an environemnt using the supplied requirements.txt file:
 ```shell
 git clone https://github.com/matanr/Memories_of_Forgotten_Concepts
-cd Memories_of_Forgotten_Concepts
+cd Memories_of_Forgotten_Concepts/src
 conda create -n mem python=3.10
 conda activate mem
 pip install -r requirements.txt
@@ -68,10 +68,16 @@ pip install -r requirements.txt
 ### [Docker Setup Information](docker/DOCKER-INFO.md)
 
 ## Running
-Make sure the outputs directory contains the concept name in either configuration:
-```shell
-export CONCEPT="<nudity/vangogh/church/garbage_truck/tench/parachute>"
-export OUTDIR=./outputs/many_${CONCEPT}
+Make sure the outputs directory contains the ``concept`` name in either configuration.
+In addition, it is recommended to specify the model name and the experimental configuration.
+For example, when running on ``ESD`` that erased the concept ``nudity``, in the ``concept-level`` configuration, set: 
+
+```
+<out directory>=memories_of_ESD_nudity
+```
+Similarly, in the `image-level`` configuration set:
+```
+<out directory>=many_memories_of_ESD_nudity
 ```
 ### Concept-Level
 Perform a concept-level analysis (example for the 'Nudity' concept):
@@ -79,8 +85,8 @@ Perform a concept-level analysis (example for the 'Nudity' concept):
 ```shell
 python memory_of_an_ablated_concept.py 
 --reference_dataset_root <path to mscoco17>
---out_dir $OUTDIR
---ablated_concept_name $CONCEPT
+--out_dir <out directory>
+--ablated_concept_name <nudity/vangogh/church/garbage_truck/tench/parachute>
 --dataset_root <path to the dataset of images of ablated_concept_name>
 --diffusion_inversion_method <renoise/nti>
 --num_diffusion_inversion_steps <default is 50>
@@ -93,8 +99,8 @@ Perform an image-level analysis:
 ```shell
 python many_memories_of_an_ablated_image.py 
 --reference_dataset_root <path to mscoco17>
---out_dir $OUTDIR
---ablated_concept_name $CONCEPT
+--out_dir <out directory>
+--ablated_concept_name <nudity/vangogh/church/garbage_truck/tench/parachute>
 --dataset_root <path to the dataset of images of ablated_concept_name>
 --num_vae_inversion_steps <default is 3000>
 --diffusion_inversion_method <renoise/nti>
