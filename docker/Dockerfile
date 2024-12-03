@@ -32,3 +32,5 @@ RUN apt-get update && apt-get install -y ffmpeg libsm6 libxext6 git ninja-build 
     curl vim nano less git bash-completion screen \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
+    
+ENV PYTHONPATH="/workspace/:${PYTHONPATH}"

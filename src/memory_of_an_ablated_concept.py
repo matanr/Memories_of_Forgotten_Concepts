@@ -540,10 +540,10 @@ class NumpyEncoder(json.JSONEncoder):
 
 def write_results_into_json(results_target, results_control_group):
     psnr_json = {
-        "tsi_goal_psnrs": results_target["psnrs"],
-        "tsi_control_group_psnrs": results_control_group["psnrs"],
-        "mean_tsi_goal_psnrs": np.mean(results_target["psnrs"]),
-        "mean_tsi_control_group_psnrs": np.mean(results_control_group["psnrs"]),
+        "memory_goal_psnrs": results_target["psnrs"],
+        "memory_control_group_psnrs": results_control_group["psnrs"],
+        "mean_memory_goal_psnrs": np.mean(results_target["psnrs"]),
+        "mean_memory_control_group_psnrs": np.mean(results_control_group["psnrs"]),
     }
 
     nll_json = {
