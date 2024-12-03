@@ -111,6 +111,15 @@ python many_memories_of_an_ablated_image.py
 
 # BibTex
 ```bib
+@misc{rusanovsky2024memoriesforgottenconcepts,
+      title={Memories of Forgotten Concepts}, 
+      author={Matan Rusanovsky and Shimon Malnick and Amir Jevnisek and Ohad Fried and Shai Avidan},
+      year={2024},
+      eprint={2412.00782},
+      archivePrefix={arXiv},
+      primaryClass={cs.CV},
+      url={https://arxiv.org/abs/2412.00782}, 
+}
 ```
 
 # Acknowlegments
