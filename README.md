@@ -3,11 +3,11 @@ Memories of Forgotten Concepts
 </h1>
 
 <h3 style="text-align: center;">
-<a href="https://scholar.google.com/citations?user=5TS4vucAAAAJ&hl=en&oi=ao">Matan Rusanovsky<sup>*</sup></a>,
-<a href="https://www.malnick.net/in/shimon-malnick-1b8404125/">Shimon Malnick<sup>*</sup></a>,
-<a href="https://scholar.google.com/citations?hl=en&user=czm6bkUAAAAJ">Amir Jevnisek<sup>*</sup></a>,
-<a href="https://www.ohadf.com/"> Ohad Fried</a>,
-<a href="http://www.eng.tau.ac.il/~avidan/"> Shai Avidan</a>
+<a target="_blank" href="https://scholar.google.com/citations?user=5TS4vucAAAAJ&hl=en&oi=ao">Matan Rusanovsky<sup>*</sup></a>,
+<a target="_blank" href="https://www.malnick.net/in/shimon-malnick-1b8404125/">Shimon Malnick<sup>*</sup></a>,
+<a target="_blank" href="https://scholar.google.com/citations?hl=en&user=czm6bkUAAAAJ">Amir Jevnisek<sup>*</sup></a>,
+<a target="_blank" href="https://www.ohadf.com/"> Ohad Fried</a>,
+<a target="_blank" href="http://www.eng.tau.ac.il/~avidan/"> Shai Avidan</a>
 </h3>
 
 <div style="text-align: center;">
@@ -15,12 +15,12 @@ Memories of Forgotten Concepts
 </div>
 
 <h3 style="text-align: center;">
-<a href="https://matanr.github.io/Memories_of_Forgotten_Concepts/">Project Page</a>
+<a target="_blank" href="https://matanr.github.io/Memories_of_Forgotten_Concepts/">Project Page</a>
 </h3>
 
 <h3 style="text-align: center;">
 <!-- add ref to arxiv below -->
-<a href="">Arxiv</a>
+<a target="_blank" href="https://arxiv.org/abs/2412.00782">Arxiv</a>
 </h3>
 
 <img src="images/teaser.png">
@@ -32,24 +32,28 @@ Official implementation of the paper:
 
 </div>
 
-# BibTex
-```bib
-```
-
 # Getting Started
 ## Requirments:
-1. Please download [mscoco17](https://cocodataset.org/#download).
-2. Please download the ablated models (Links for [[Object](https://drive.google.com/file/d/1e5aX8gkC34YaHGR0S1-EQwBmUXiAPvpE/view), [Others](https://drive.google.com/file/d/1yeZNJ8MoHsisdZmt5lbnG_kSgl5xned0/view)]).
-3. Please generate the datasets of the erased concepts using the appropriate csv file. For example, to generate the Nudity dataset:
+1. Download [mscoco17](https://cocodataset.org/#download).
+2. Download the ablated models (Links for [[Object](https://drive.google.com/file/d/1e5aX8gkC34YaHGR0S1-EQwBmUXiAPvpE/view), [Others](https://drive.google.com/file/d/1yeZNJ8MoHsisdZmt5lbnG_kSgl5xned0/view)]).
+3. Generate the datasets of the erased concepts using the appropriate csv file. For example, to generate the Nudity dataset:
 ```shell
-cd Memories_of_Forgotten_Concepts
+cd Memories_of_Forgotten_Concepts/src
 export CONCEPT=nudity
-export PROMPT_FILE=./prompts/${CONCEPT}.csv
-export SAVE_PATH=./datasets
+export PROMPT_FILE=../prompts/${CONCEPT}.csv
+export SAVE_PATH=../datasets
 mkdir -p $SAVE_PATH
-python src/generate_dataset.py --prompts_path ${PROMPT_FILE} --concept ${CONCEPT} --save_path ${SAVE_PATH} --device cuda:0
+python generate_dataset.py --prompts_path ${PROMPT_FILE} --concept ${CONCEPT} --save_path ${SAVE_PATH} --device cuda:0
 ```
-4. Please download the [style classifier](https://drive.google.com/file/d/1me_MOrXip1Xa-XaUrPZZY7i49pgFe1po/view) for detection of the Van Gogh concept. Add an environemnt variable for the classifier:
+For objects use the ```generate_object_dataset.py```, for example to generate the Parachute object dataset:
+```shell
+cd Memories_of_Forgotten_Concepts/src
+export CONCEPT=parachute
+export SAVE_PATH=../datasets
+mkdir -p $SAVE_PATH
+python generate_object_dataset.py --concept ${CONCEPT} --save_path ${SAVE_PATH}
+```
+4. Download the [style classifier](https://drive.google.com/file/d/1me_MOrXip1Xa-XaUrPZZY7i49pgFe1po/view) for detection of the Van Gogh concept. Add an environemnt variable for the classifier:
 ```shell
 export STYLE_CLASSIFIER_DIR=/path/to/cls/dir
 ```
@@ -75,7 +79,7 @@ For example, when running on ``ESD`` that erased the concept ``nudity``, in the 
 ```
 <out directory>=memories_of_ESD_nudity
 ```
-Similarly, in the `image-level`` configuration set:
+Similarly, in the "image-level" configuration set:
 ```
 <out directory>=many_memories_of_ESD_nudity
 ```
