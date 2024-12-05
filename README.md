@@ -2,32 +2,28 @@
 Memories of Forgotten Concepts
 </h1>
 
-<h3 style="text-align: center;">
-<a target="_blank" href="https://scholar.google.com/citations?user=5TS4vucAAAAJ&hl=en&oi=ao">Matan Rusanovsky<sup>*</sup></a>,
-<a target="_blank" href="https://www.malnick.net/in/shimon-malnick-1b8404125/">Shimon Malnick<sup>*</sup></a>,
-<a target="_blank" href="https://scholar.google.com/citations?hl=en&user=czm6bkUAAAAJ">Amir Jevnisek<sup>*</sup></a>,
-<a target="_blank" href="https://www.ohadf.com/"> Ohad Fried</a>,
-<a target="_blank" href="http://www.eng.tau.ac.il/~avidan/"> Shai Avidan</a>
-</h3>
+<a href="https://matanr.github.io/Memories_of_Forgotten_Concepts/"><img src="https://img.shields.io/static/v1?label=Project&message=Website&color=blue"></a>
+<a href="https://arxiv.org/abs/2412.00782"><img src="https://img.shields.io/badge/arXiv-2311.17891-b31b1b.svg"></a>
 
-<div style="text-align: center;">
-    <h6><sup>*</sup>Equal Contribution</h6>
-</div>
 
-<h3 style="text-align: center;">
-<a target="_blank" href="https://matanr.github.io/Memories_of_Forgotten_Concepts/">Project Page</a>
-</h3>
 
-<h3 style="text-align: center;">
-<!-- add ref to arxiv below -->
-<a target="_blank" href="https://arxiv.org/abs/2412.00782">Arxiv</a>
-</h3>
+
 
 <img src="images/teaser.png">
 
-<div style="text-align: center;">
-Official implementation of the paper:
- <a href=""> Memories of Forgotten Concepts</a>
+
+> [Memories of Forgotten Concepts](https://matanr.github.io/Memories_of_Forgotten_Concepts/)
+>
+>
+> [Matan Rusanovsky<sup>*</sup>](https://scholar.google.com/citations?user=5TS4vucAAAAJ&hl=en&oi=ao), [Shimon Malnick<sup>*</sup>](https://www.malnick.net/in/shimon-malnick-1b8404125/), [Amir Jevnisek<sup>*</sup>](https://scholar.google.com/citations?hl=en&user=czm6bkUAAAAJ), [Ohad Fried](https://www.ohadf.com/), [Shai Avidan](http://www.eng.tau.ac.il/~avidan/)
+>
+>
+> <sup>*</sup>Equal Contribution
+>
+> Many studies aim to erase concepts from diffusion models. While these models may no longer generate images tied to the erased concept when prompted, we ask: **Is the concept truly erased? Could the model still reproduce it through other means?**
+>
+> Instead of analyzing a model that erased some concept by generating many images and analyzing them, we propose a method that analyzes it using latents that generate the erased concept.
+
 <br>
 
 </div>
@@ -72,6 +68,7 @@ pip install -r requirements.txt
 ### [Docker Setup Information](docker/DOCKER-INFO.md)
 
 ## Running
+#### Output directory
 Make sure the outputs directory contains the ``concept`` name in either configuration.
 In addition, it is recommended to specify the model name and the experimental configuration.
 For example, when running on ``ESD`` that erased the concept ``nudity``, in the ``concept-level`` configuration, set: 
@@ -79,23 +76,33 @@ For example, when running on ``ESD`` that erased the concept ``nudity``, in the 
 ```
 <out directory>=memories_of_ESD_nudity
 ```
-Similarly, in the "image-level" configuration set:
+Similarly, in the "image-level" configuration, set:
 ```
 <out directory>=many_memories_of_ESD_nudity
 ```
+#### Ablated Model
+For all models except for AdvUnlearn, set:
+```
+--ablated_model <path to the ablated model>
+```
+Instead, for AdvUnlearn, include: 
+```
+--ablated_text_encoder OPTML-Group/AdvUnlearn
+```
+💡 Only one of these two options (--ablated_model or --ablated_text_encoder) should be used at a time, according to the model that is being analyzed.
+
 ### Concept-Level
-Perform a concept-level analysis (example for the 'Nudity' concept):
+Perform a concept-level analysis:
 
 ```shell
-python memory_of_an_ablated_concept.py 
+python memory_of_an_ablated_concept.py
 --reference_dataset_root <path to mscoco17>
 --out_dir <out directory>
 --ablated_concept_name <nudity/vangogh/church/garbage_truck/tench/parachute>
 --dataset_root <path to the dataset of images of ablated_concept_name>
 --diffusion_inversion_method <renoise/nti>
---num_diffusion_inversion_steps <default is 50>
---ablated_model <for all models except for AdvUnlearn include this parameter with the path to the ablated model, otherwise ignore this parameter>
---ablated_text_encoder <for AdvUnlearn include this parameter with: OPTML-Group/AdvUnlearn, otherwise ignore this parameter>
+--num_diffusion_inversion_steps 50
+[--ablated_model <path to the ablated model> | --ablated_text_encoder OPTML-Group/AdvUnlearn]
 ```
 
 ### Image-Level
@@ -106,11 +113,10 @@ python many_memories_of_an_ablated_image.py
 --out_dir <out directory>
 --ablated_concept_name <nudity/vangogh/church/garbage_truck/tench/parachute>
 --dataset_root <path to the dataset of images of ablated_concept_name>
---num_vae_inversion_steps <default is 3000>
+--num_vae_inversion_steps 3000
 --diffusion_inversion_method <renoise/nti>
---num_diffusion_inversion_steps <default is 50>
---ablated_model <for all models except for AdvUnlearn include this parameter with the path to the ablated model, otherwise ignore this parameter>
---ablated_text_encoder <for AdvUnlearn include this parameter with: OPTML-Group/AdvUnlearn, otherwise ignore this parameter>
+--num_diffusion_inversion_steps 50
+[--ablated_model <path to the ablated model> | --ablated_text_encoder OPTML-Group/AdvUnlearn]
 ```
 
 # BibTex
