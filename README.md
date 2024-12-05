@@ -20,9 +20,9 @@ Memories of Forgotten Concepts
 >
 > <sup>*</sup>Equal Contribution
 >
-> Many studies aim to erase concepts from diffusion models. While these models may no longer generate images tied to the erased concept when prompted, we ask: **Is the concept truly erased? Could the model still reproduce it through other means?**
+> ❓ Many studies aim to erase concepts from diffusion models. While these models may no longer generate images tied to the erased concept when prompted, we ask: **Is the concept truly erased? Could the model still reproduce it through other means?**
 >
-> Instead of analyzing a model that erased some concept by generating many images and analyzing them, we propose a method that analyzes it using latents that generate the erased concept.
+> ↪️Instead of analyzing a model that erased some concept by generating many images and analyzing them, we propose a method that analyzes it using latents that generate the erased concept.
 
 <br>
 
