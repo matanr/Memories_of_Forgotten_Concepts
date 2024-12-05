@@ -26,6 +26,26 @@
 
   <script defer src="./project_page_data/js/fontawesome.all.min.js"></script>
   <script src="project_page_data/js/load-mathjax.js" async></script>
+
+  <script>
+    function copyBibtex() {
+      // Select the BibTeX content
+      const bibtexContent = document.getElementById('bibtex-code').innerText;
+
+      // Copy the content to clipboard
+      navigator.clipboard.writeText(bibtexContent)
+              .then(() => {
+                // Create feedback element
+                const feedback = document.getElementById('copied-feedback');
+                feedback.style.display = 'inline';
+                // Hide feedback after 2 seconds
+                setTimeout(() => {
+                  feedback.style.display = 'none';
+                }, 2000);
+              })
+    }
+  </script>
+
 </head>
 <body>
 
@@ -203,8 +223,8 @@
       <h2 class="title">BibTeX</h2>
     </div>
     <div class="columns is-centered has-text-centered">
-      <div class="column is-four-fifths bibtex">
-<pre><code class="lang-bib">@misc{rusanovsky2024memoriesforgottenconcepts,
+      <div class="column is-four-fifths bibtex-div">
+<pre><code id="bibtex-code" class="lang-bib">@misc{rusanovsky2024memoriesforgottenconcepts,
   <span class="hljs-attr">   title={Memories of Forgotten Concepts</span>},
   <span class="hljs-attr">   author</span>={Matan Rusanovsky <span class="hljs-literal">and</span> Shimon Malnick <span class="hljs-literal">and</span> Amir Jevnisek <span class="hljs-literal">and</span> Ohad Fried <span class="hljs-literal">and</span> Shai Avidan},
   <span class="hljs-attr">   year={2024},</span>
@@ -215,6 +235,35 @@
   <span>}</span>
 </code>
 </pre>
+        <button
+              class="copy-btn"
+              onclick="copyBibtex()"
+              aria-label="Copy to clipboard"
+              style="
+              position: absolute;
+              top: 55px;
+              right: 95px;
+              background: none;
+              border: none;
+              cursor: default;
+              font-size: 2em;
+              color: dimgray;
+            ">
+          &#x2398; <!-- Unicode for a clipboard-like symbol -->
+        </button>
+        <!-- Feedback message -->
+        <span id="copied-feedback"
+              style="
+              position: absolute;
+              top: 65px;
+              right: 125px;
+              font-size: 0.9em;
+              color: dimgray;
+              display: none;
+            ">
+            Copied
+          </span>
+
       </div>
   </div>
   </div>
