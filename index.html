@@ -46,6 +46,43 @@
     }
   </script>
 
+  <style>
+    table {
+      border-collapse: collapse; /* Removes double borders */
+      width: 100%; /* Ensures table takes full width */
+      font-size: 9px;
+      table-layout: fixed;
+    }
+    th, td {
+      /*border: 1px solid #ddd; !* Adds border to table cells *!*/
+      /*padding: 1px; !* Adds space inside cells *!*/
+      text-align: center; /* Aligns text to the left */
+    }
+    tr {
+      line-height: 1; /* Adds vertical spacing between rows */
+
+    }
+
+    .table_img {
+      width: 80px; /* Consistent width for all images */
+      height: 80px; /* Consistent height for all images */
+      object-fit: cover; /* Ensures images are cropped proportionally */
+      border-spacing: 1px;
+      /*border: 1px solid #ddd; !* Optional: Add a border around images *!*/
+    }
+    /* Dynamically reduce font size if too many columns */
+    @media (max-width: 800px) {
+      table {
+        font-size: 8px; /* Reduce font size on smaller screens */
+      }
+    }
+    @media (max-width: 600px) {
+      table {
+        font-size: 7px; /* Further reduce font size on very small screens */
+      }
+    }
+  </style>
+
 </head>
 <body>
 
@@ -190,6 +227,420 @@
       <div class="column is-four-fifths">
         <div class="description">
           <p>
+            The images generated using the latents we find resemble the erased concept, while simple generation does not necessarily do so. <br><br>
+          </p>
+        </div>
+        <table >
+          <thead>
+          <tr>
+            <th></th>
+            <th colspan="2">Nudity</th>
+            <th colspan="2">Church</th>
+            <th colspan="2">Garbage Truck</th>
+            <th colspan="2">Parachute</th>
+            <th colspan="2">Tench</th>
+            <th colspan="2">Van Gogh</th>
+          </tr>
+
+          <tr>
+            <!-- Subheaders for each concept -->
+            <th></th>
+            <th>Fixed Seed</th>
+            <th>Our Analysis</th>
+            <th>Fixed Seed</th>
+            <th>Our Analysis</th>
+            <th>Fixed Seed</th>
+            <th>Our Analysis</th>
+            <th>Fixed Seed</th>
+            <th>Our Analysis</th>
+            <th>Fixed Seed</th>
+            <th>Our Analysis</th>
+            <th>Fixed Seed</th>
+            <th>Our Analysis</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr>
+            <td style="vertical-align: middle; font-weight: bold;">Vanilla</td>
+            <td>
+              <img class="table_img is-responsive" src="project_page_data/images/generations/nudity_vanilla_simple.webp" loading="lazy" alt="vanilla nudity generation simple">
+            </td>
+            <td>
+              <img class="table_img is-responsive" src="project_page_data/images/generations/nudity_vanilla_memory.webp" loading="lazy" alt="vanilla nudity generation memory">
+            </td>
+            <td>
+              <img class="table_img is-responsive" src="project_page_data/images/generations/church_vanilla_simple.webp" loading="lazy" alt="vanilla church generation simple">
+            </td>
+            <td>
+              <img class="table_img is-responsive" src="project_page_data/images/generations/church_vanilla_memory.webp" loading="lazy" alt="vanilla church generation memory">
+            </td>
+            <td>
+              <img class="table_img is-responsive" src="project_page_data/images/generations/garbage_truck_vanilla_simple.webp" loading="lazy" alt="vanilla garbage_truck generation simple">
+            </td>
+            <td>
+              <img class="table_img is-responsive" src="project_page_data/images/generations/garbage_truck_vanilla_memory.webp" loading="lazy" alt="vanilla garbage_truck generation memory">
+            </td>
+            <td>
+              <img class="table_img is-responsive" src="project_page_data/images/generations/parachute_vanilla_simple.webp" loading="lazy" alt="vanilla parachute generation simple">
+            </td>
+            <td>
+              <img class="table_img is-responsive" src="project_page_data/images/generations/parachute_vanilla_memory.webp" loading="lazy" alt="vanilla parachute generation memory">
+            </td>
+            <td>
+              <img class="table_img is-responsive" src="project_page_data/images/generations/tench_vanilla_simple.webp" loading="lazy" alt="vanilla tench generation simple">
+            </td>
+            <td>
+              <img class="table_img is-responsive" src="project_page_data/images/generations/tench_vanilla_memory.webp" loading="lazy" alt="vanilla tench generation memory">
+            </td>
+            <td>
+              <img class="table_img is-responsive" src="project_page_data/images/generations/vangogh_vanilla_simple.webp" loading="lazy" alt="vanilla vangogh generation simple">
+            </td>
+            <td>
+              <img class="table_img is-responsive" src="project_page_data/images/generations/vangogh_vanilla_memory.webp" loading="lazy" alt="vanilla vangogh generation memory">
+            </td>
+          </tr>
+          <tr>
+            <td style="vertical-align: middle; font-weight: bold;">EraseDiff</td>
+            <td>
+              <img class="table_img is-responsive" src="project_page_data/images/generations/nudity_EraseDiff_simple.webp" loading="lazy" alt="EraseDiff nudity generation simple">
+            </td>
+            <td>
+              <img class="table_img is-responsive" src="project_page_data/images/generations/nudity_EraseDiff_memory.webp" loading="lazy" alt="EraseDiff nudity generation memory">
+            </td>
+            <td>
+              <img class="table_img is-responsive" src="project_page_data/images/generations/church_EraseDiff_simple.webp" loading="lazy" alt="EraseDiff church generation simple">
+            </td>
+            <td>
+              <img class="table_img is-responsive" src="project_page_data/images/generations/church_EraseDiff_memory.webp" loading="lazy" alt="EraseDiff church generation memory">
+            </td>
+            <td>
+              <img class="table_img is-responsive" src="project_page_data/images/generations/garbage_truck_EraseDiff_simple.webp" loading="lazy" alt="EraseDiff garbage_truck generation simple">
+            </td>
+            <td>
+              <img class="table_img is-responsive" src="project_page_data/images/generations/garbage_truck_EraseDiff_memory.webp" loading="lazy" alt="EraseDiff garbage_truck generation memory">
+            </td>
+            <td>
+              <img class="table_img is-responsive" src="project_page_data/images/generations/parachute_EraseDiff_simple.webp" loading="lazy" alt="EraseDiff parachute generation simple">
+            </td>
+            <td>
+              <img class="table_img is-responsive" src="project_page_data/images/generations/parachute_EraseDiff_memory.webp" loading="lazy" alt="EraseDiff parachute generation memory">
+            </td>
+            <td>
+              <img class="table_img is-responsive" src="project_page_data/images/generations/tench_EraseDiff_simple.webp" loading="lazy" alt="EraseDiff tench generation simple">
+            </td>
+            <td>
+              <img class="table_img is-responsive" src="project_page_data/images/generations/tench_EraseDiff_memory.webp" loading="lazy" alt="EraseDiff tench generation memory">
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+          </tr>
+          <tr>
+            <td style="vertical-align: middle; font-weight: bold;">ESD</td>
+            <td>
+              <img class="table_img is-responsive" src="project_page_data/images/generations/nudity_ESD_simple.webp" loading="lazy" alt="ESD nudity generation simple">
+            </td>
+            <td>
+              <img class="table_img is-responsive" src="project_page_data/images/generations/nudity_ESD_memory.webp" loading="lazy" alt="ESD nudity generation memory">
+            </td>
+            <td>
+              <img class="table_img is-responsive" src="project_page_data/images/generations/church_ESD_simple.webp" loading="lazy" alt="ESD church generation simple">
+            </td>
+            <td>
+              <img class="table_img is-responsive" src="project_page_data/images/generations/church_ESD_memory.webp" loading="lazy" alt="ESD church generation memory">
+            </td>
+            <td>
+              <img class="table_img is-responsive" src="project_page_data/images/generations/garbage_truck_ESD_simple.webp" loading="lazy" alt="ESD garbage_truck generation simple">
+            </td>
+            <td>
+              <img class="table_img is-responsive" src="project_page_data/images/generations/garbage_truck_ESD_memory.webp" loading="lazy" alt="ESD garbage_truck generation memory">
+            </td>
+            <td>
+              <img class="table_img is-responsive" src="project_page_data/images/generations/parachute_ESD_simple.webp" loading="lazy" alt="ESD parachute generation simple">
+            </td>
+            <td>
+              <img class="table_img is-responsive" src="project_page_data/images/generations/parachute_ESD_memory.webp" loading="lazy" alt="ESD parachute generation memory">
+            </td>
+            <td>
+              <img class="table_img is-responsive" src="project_page_data/images/generations/tench_ESD_simple.webp" loading="lazy" alt="ESD tench generation simple">
+            </td>
+            <td>
+              <img class="table_img is-responsive" src="project_page_data/images/generations/tench_ESD_memory.webp" loading="lazy" alt="ESD tench generation memory">
+            </td>
+            <td>
+              <img class="table_img is-responsive" src="project_page_data/images/generations/vangogh_ESD_simple.webp" loading="lazy" alt="ESD vangogh generation simple">
+            </td>
+            <td>
+              <img class="table_img is-responsive" src="project_page_data/images/generations/vangogh_ESD_memory.webp" loading="lazy" alt="ESD vangogh generation memory">
+            </td>
+          </tr>
+          <tr>
+            <td style="vertical-align: middle; font-weight: bold;">AdvUnlearn</td>
+            <td>
+              <img class="table_img is-responsive" src="project_page_data/images/generations/nudity_AdvUnlearn_simple.webp" loading="lazy" alt="AdvUnlearn nudity generation simple">
+            </td>
+            <td>
+              <img class="table_img is-responsive" src="project_page_data/images/generations/nudity_AdvUnlearn_memory.webp" loading="lazy" alt="AdvUnlearn nudity generation memory">
+            </td>
+            <td>
+              <img class="table_img is-responsive" src="project_page_data/images/generations/church_AdvUnlearn_simple.webp" loading="lazy" alt="AdvUnlearn church generation simple">
+            </td>
+            <td>
+              <img class="table_img is-responsive" src="project_page_data/images/generations/church_AdvUnlearn_memory.webp" loading="lazy" alt="AdvUnlearn church generation memory">
+            </td>
+            <td>
+              <img class="table_img is-responsive" src="project_page_data/images/generations/garbage_truck_AdvUnlearn_simple.webp" loading="lazy" alt="AdvUnlearn garbage_truck generation simple">
+            </td>
+            <td>
+              <img class="table_img is-responsive" src="project_page_data/images/generations/garbage_truck_AdvUnlearn_memory.webp" loading="lazy" alt="AdvUnlearn garbage_truck generation memory">
+            </td>
+            <td>
+              <img class="table_img is-responsive" src="project_page_data/images/generations/parachute_AdvUnlearn_simple.webp" loading="lazy" alt="AdvUnlearn parachute generation simple">
+            </td>
+            <td>
+              <img class="table_img is-responsive" src="project_page_data/images/generations/parachute_AdvUnlearn_memory.webp" loading="lazy" alt="AdvUnlearn parachute generation memory">
+            </td>
+            <td>
+              <img class="table_img is-responsive" src="project_page_data/images/generations/tench_AdvUnlearn_simple.webp" loading="lazy" alt="AdvUnlearn tench generation simple">
+            </td>
+            <td>
+              <img class="table_img is-responsive" src="project_page_data/images/generations/tench_AdvUnlearn_memory.webp" loading="lazy" alt="AdvUnlearn tench generation memory">
+            </td>
+            <td>
+              <img class="table_img is-responsive" src="project_page_data/images/generations/vangogh_AdvUnlearn_simple.webp" loading="lazy" alt="AdvUnlearn vangogh generation simple">
+            </td>
+            <td>
+              <img class="table_img is-responsive" src="project_page_data/images/generations/vangogh_AdvUnlearn_memory.webp" loading="lazy" alt="AdvUnlearn vangogh generation memory">
+            </td>
+          </tr>
+          <tr>
+            <td style="vertical-align: middle; font-weight: bold;">SPM</td>
+            <td>
+              <img class="table_img is-responsive" src="project_page_data/images/generations/nudity_SPM_simple.webp" loading="lazy" alt="SPM nudity generation simple">
+            </td>
+            <td>
+              <img class="table_img is-responsive" src="project_page_data/images/generations/nudity_SPM_memory.webp" loading="lazy" alt="SPM nudity generation memory">
+            </td>
+            <td>
+              <img class="table_img is-responsive" src="project_page_data/images/generations/church_SPM_simple.webp" loading="lazy" alt="SPM church generation simple">
+            </td>
+            <td>
+              <img class="table_img is-responsive" src="project_page_data/images/generations/church_SPM_memory.webp" loading="lazy" alt="SPM church generation memory">
+            </td>
+            <td>
+              <img class="table_img is-responsive" src="project_page_data/images/generations/garbage_truck_SPM_simple.webp" loading="lazy" alt="SPM garbage_truck generation simple">
+            </td>
+            <td>
+              <img class="table_img is-responsive" src="project_page_data/images/generations/garbage_truck_SPM_memory.webp" loading="lazy" alt="SPM garbage_truck generation memory">
+            </td>
+            <td>
+              <img class="table_img is-responsive" src="project_page_data/images/generations/parachute_SPM_simple.webp" loading="lazy" alt="SPM parachute generation simple">
+            </td>
+            <td>
+              <img class="table_img is-responsive" src="project_page_data/images/generations/parachute_SPM_memory.webp" loading="lazy" alt="SPM parachute generation memory">
+            </td>
+            <td>
+              <img class="table_img is-responsive" src="project_page_data/images/generations/tench_SPM_simple.webp" loading="lazy" alt="SPM tench generation simple">
+            </td>
+            <td>
+              <img class="table_img is-responsive" src="project_page_data/images/generations/tench_SPM_memory.webp" loading="lazy" alt="SPM tench generation memory">
+            </td>
+            <td>
+              <img class="table_img is-responsive" src="project_page_data/images/generations/vangogh_SPM_simple.webp" loading="lazy" alt="SPM vangogh generation simple">
+            </td>
+            <td>
+              <img class="table_img is-responsive" src="project_page_data/images/generations/vangogh_SPM_memory.webp" loading="lazy" alt="SPM vangogh generation memory">
+            </td>
+          </tr>
+          <tr>
+            <td style="vertical-align: middle; font-weight: bold;">Salun</td>
+            <td>
+              <img class="table_img is-responsive" src="project_page_data/images/generations/nudity_Salun_simple.webp" loading="lazy" alt="Salun nudity generation simple">
+            </td>
+            <td>
+              <img class="table_img is-responsive" src="project_page_data/images/generations/nudity_Salun_memory.webp" loading="lazy" alt="Salun nudity generation memory">
+            </td>
+            <td>
+              <img class="table_img is-responsive" src="project_page_data/images/generations/church_Salun_simple.webp" loading="lazy" alt="Salun church generation simple">
+            </td>
+            <td>
+              <img class="table_img is-responsive" src="project_page_data/images/generations/church_Salun_memory.webp" loading="lazy" alt="Salun church generation memory">
+            </td>
+            <td>
+              <img class="table_img is-responsive" src="project_page_data/images/generations/garbage_truck_Salun_simple.webp" loading="lazy" alt="Salun garbage_truck generation simple">
+            </td>
+            <td>
+              <img class="table_img is-responsive" src="project_page_data/images/generations/garbage_truck_Salun_memory.webp" loading="lazy" alt="Salun garbage_truck generation memory">
+            </td>
+            <td>
+              <img class="table_img is-responsive" src="project_page_data/images/generations/parachute_Salun_simple.webp" loading="lazy" alt="Salun parachute generation simple">
+            </td>
+            <td>
+              <img class="table_img is-responsive" src="project_page_data/images/generations/parachute_Salun_memory.webp" loading="lazy" alt="Salun parachute generation memory">
+            </td>
+            <td>
+              <img class="table_img is-responsive" src="project_page_data/images/generations/tench_Salun_simple.webp" loading="lazy" alt="Salun tench generation simple">
+            </td>
+            <td>
+              <img class="table_img is-responsive" src="project_page_data/images/generations/tench_Salun_memory.webp" loading="lazy" alt="Salun tench generation memory">
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+          </tr>
+          <tr>
+            <td style="vertical-align: middle; font-weight: bold;">Scissorhands</td>
+            <td>
+              <img class="table_img is-responsive" src="project_page_data/images/generations/nudity_Scissorhands_simple.webp" loading="lazy" alt="Scissorhands nudity generation simple">
+            </td>
+            <td>
+              <img class="table_img is-responsive" src="project_page_data/images/generations/nudity_Scissorhands_memory.webp" loading="lazy" alt="Scissorhands nudity generation memory">
+            </td>
+            <td>
+              <img class="table_img is-responsive" src="project_page_data/images/generations/church_Scissorhands_simple.webp" loading="lazy" alt="Scissorhands church generation simple">
+            </td>
+            <td>
+              <img class="table_img is-responsive" src="project_page_data/images/generations/church_Scissorhands_memory.webp" loading="lazy" alt="Scissorhands church generation memory">
+            </td>
+            <td>
+              <img class="table_img is-responsive" src="project_page_data/images/generations/garbage_truck_Scissorhands_simple.webp" loading="lazy" alt="Scissorhands garbage_truck generation simple">
+            </td>
+            <td>
+              <img class="table_img is-responsive" src="project_page_data/images/generations/garbage_truck_Scissorhands_memory.webp" loading="lazy" alt="Scissorhands garbage_truck generation memory">
+            </td>
+            <td>
+              <img class="table_img is-responsive" src="project_page_data/images/generations/parachute_Scissorhands_simple.webp" loading="lazy" alt="Scissorhands parachute generation simple">
+            </td>
+            <td>
+              <img class="table_img is-responsive" src="project_page_data/images/generations/parachute_Scissorhands_memory.webp" loading="lazy" alt="Scissorhands parachute generation memory">
+            </td>
+            <td>
+              <img class="table_img is-responsive" src="project_page_data/images/generations/tench_Scissorhands_simple.webp" loading="lazy" alt="Scissorhands tench generation simple">
+            </td>
+            <td>
+              <img class="table_img is-responsive" src="project_page_data/images/generations/tench_Scissorhands_memory.webp" loading="lazy" alt="Scissorhands tench generation memory">
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+          </tr>
+          <tr>
+            <td style="vertical-align: middle; font-weight: bold;">FMN</td>
+            <td>
+              <img class="table_img is-responsive" src="project_page_data/images/generations/nudity_FMN_simple.webp" loading="lazy" alt="FMN nudity generation simple">
+            </td>
+            <td>
+              <img class="table_img is-responsive" src="project_page_data/images/generations/nudity_FMN_memory.webp" loading="lazy" alt="FMN nudity generation memory">
+            </td>
+            <td>
+              <img class="table_img is-responsive" src="project_page_data/images/generations/church_FMN_simple.webp" loading="lazy" alt="FMN church generation simple">
+            </td>
+            <td>
+              <img class="table_img is-responsive" src="project_page_data/images/generations/church_FMN_memory.webp" loading="lazy" alt="FMN church generation memory">
+            </td>
+            <td>
+              <img class="table_img is-responsive" src="project_page_data/images/generations/garbage_truck_FMN_simple.webp" loading="lazy" alt="FMN garbage_truck generation simple">
+            </td>
+            <td>
+              <img class="table_img is-responsive" src="project_page_data/images/generations/garbage_truck_FMN_memory.webp" loading="lazy" alt="FMN garbage_truck generation memory">
+            </td>
+            <td>
+              <img class="table_img is-responsive" src="project_page_data/images/generations/parachute_FMN_simple.webp" loading="lazy" alt="FMN parachute generation simple">
+            </td>
+            <td>
+              <img class="table_img is-responsive" src="project_page_data/images/generations/parachute_FMN_memory.webp" loading="lazy" alt="FMN parachute generation memory">
+            </td>
+            <td>
+              <img class="table_img is-responsive" src="project_page_data/images/generations/tench_FMN_simple.webp" loading="lazy" alt="FMN tench generation simple">
+            </td>
+            <td>
+              <img class="table_img is-responsive" src="project_page_data/images/generations/tench_FMN_memory.webp" loading="lazy" alt="FMN tench generation memory">
+            </td>
+            <td>
+              <img class="table_img is-responsive" src="project_page_data/images/generations/vangogh_FMN_simple.webp" loading="lazy" alt="FMN vangogh generation simple">
+            </td>
+            <td>
+              <img class="table_img is-responsive" src="project_page_data/images/generations/vangogh_FMN_memory.webp" loading="lazy" alt="FMN vangogh generation memory">
+            </td>
+          </tr>
+          <tr>
+            <td style="vertical-align: middle; font-weight: bold;">UCE</td>
+            <td>
+              <img class="table_img is-responsive" src="project_page_data/images/generations/nudity_UCE_simple.webp" loading="lazy" alt="UCE nudity generation simple">
+            </td>
+            <td>
+              <img class="table_img is-responsive" src="project_page_data/images/generations/nudity_UCE_memory.webp" loading="lazy" alt="UCE nudity generation memory">
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+            <td>
+              <img class="table_img is-responsive" src="project_page_data/images/generations/vangogh_UCE_simple.webp" loading="lazy" alt="UCE vangogh generation simple">
+            </td>
+            <td>
+              <img class="table_img is-responsive" src="project_page_data/images/generations/vangogh_UCE_memory.webp" loading="lazy" alt="UCE vangogh generation memory">
+            </td>
+          </tr>
+          <tr>
+            <td style="vertical-align: middle; font-weight: bold;">AC</td>
+            <td>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+            <td>
+              <img class="table_img is-responsive" src="project_page_data/images/generations/vangogh_AC_simple.webp" loading="lazy" alt="AC vangogh generation simple">
+            </td>
+            <td>
+              <img class="table_img is-responsive" src="project_page_data/images/generations/vangogh_AC_memory.webp" loading="lazy" alt="AC vangogh generation memory">
+            </td>
+          </tr>
+          </tbody>
+        </table>
+        <br>
+        <br>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <div class="description">
+          <p>
             We can also retrieve multiple distant latents that can generate a given image.
             This is done by inverting the diffusion model's decoder with different initializations (using arbitrary non erased images \( \mathcal{I}_{s_i} \)) before we perform image inversion.
           </p>
@@ -200,9 +651,7 @@
       </div>
     </div>
   </div>
-</section>
 
-<section class="section">
 <div class="container is-max-desktop">
   <div class="columns is-centered has-text-centered">
     <div class="column is-four-fifths">
