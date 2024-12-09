@@ -5,21 +5,22 @@ models = ["vanilla", "EraseDiff", "ESD", "AdvUnlearn", "SPM", "Salun", "Scissorh
 
 if __name__ == "__main__":
     base_dir = "project_page_data/images/generations"
-    print_str = "<tbody>\n"
+    width = 0.15
+    print_str = ""
     for model in models:
         model_print_name = model[0].upper() + model[1:]
-        print_str += f'<tr>\n<td style="vertical-align: middle; font-weight: bold;">{model_print_name}</td>\n'
-        for concept in concepts:
-            simple_path = osp.join(base_dir, f"{concept}_{model}_simple.webp")
-            memory_path = osp.join(base_dir, f"{concept}_{model}_memory.webp")
-            print_str += "<td>\n"
+        print_str += r"\raisebox{0.075\linewidth}{" + f"{model_print_name}}} & "
+        for idx, concept in enumerate(concepts):
+            simple_path = osp.join(base_dir, f"{concept}_{model}_simple.png")
+            memory_path = osp.join(base_dir, f"{concept}_{model}_memory.png")
             if osp.exists(simple_path):
-                print_str += f'<img class="table_img is-responsive" src="{simple_path}" loading="lazy" alt="{model} {concept} generation simple">\n'
-            print_str += "</td>\n<td>\n"
+                print_str += f'\includegraphics[width={width}\linewidth]{{{simple_path.replace("project_page_data/images/", "")}}}'
+            print_str += "& "
             if osp.exists(memory_path):
-                print_str += f'<img class="table_img is-responsive" src="{memory_path}" loading="lazy" alt="{model} {concept} generation memory">\n'
-            print_str += "</td>\n"
-        print_str += "</tr>\n"
-    print_str += "</tbody>"
+                print_str += f'\includegraphics[width={width}\linewidth]{{{memory_path.replace("project_page_data/images/", "")}}}'
+            if idx != len(concepts) - 1:
+                print_str += "& "
+            else:
+                print_str += "\\tabularnewline\n"
     print(print_str)
             
