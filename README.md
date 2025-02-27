@@ -1,5 +1,5 @@
 <h1 style="text-align: center;">
-Memories of Forgotten Concepts
+Memories of Forgotten Concepts [CVPR 2025]
 </h1>
 
 <a href="https://matanr.github.io/Memories_of_Forgotten_Concepts/"><img src="https://img.shields.io/static/v1?label=Project&message=Website&color=blue"></a>
