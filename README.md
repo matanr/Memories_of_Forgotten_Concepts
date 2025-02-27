@@ -15,7 +15,7 @@ Memories of Forgotten Concepts [CVPR 2025]
 > [Memories of Forgotten Concepts](https://matanr.github.io/Memories_of_Forgotten_Concepts/)
 >
 >
-> [Matan Rusanovsky<sup>*</sup>](https://scholar.google.com/citations?user=5TS4vucAAAAJ&hl=en&oi=ao), [Shimon Malnick<sup>*</sup>](https://www.malnick.net/in/shimon-malnick-1b8404125/), [Amir Jevnisek<sup>*</sup>](https://scholar.google.com/citations?hl=en&user=czm6bkUAAAAJ), [Ohad Fried](https://www.ohadf.com/), [Shai Avidan](http://www.eng.tau.ac.il/~avidan/)
+> [Matan Rusanovsky<sup>*</sup>](https://scholar.google.com/citations?user=5TS4vucAAAAJ&hl=en&oi=ao), [Shimon Malnick<sup>*</sup>](https://www.malnick.net), [Amir Jevnisek<sup>*</sup>](https://scholar.google.com/citations?hl=en&user=czm6bkUAAAAJ), [Ohad Fried](https://www.ohadf.com/), [Shai Avidan](http://www.eng.tau.ac.il/~avidan/)
 >
 >
 > <sup>*</sup>Equal Contribution
