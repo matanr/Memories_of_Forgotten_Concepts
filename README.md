@@ -29,7 +29,7 @@ Memories of Forgotten Concepts <br> CVPR 2025 (Highlight)
 </div>
 
 # Getting Started
-## Requirments:
+## Requirements:
 1. Download [mscoco17](https://cocodataset.org/#download).
 2. Download the ablated models (Links for [[Object](https://drive.google.com/file/d/1e5aX8gkC34YaHGR0S1-EQwBmUXiAPvpE/view), [Others](https://drive.google.com/file/d/1yeZNJ8MoHsisdZmt5lbnG_kSgl5xned0/view)]).
 3. Generate the datasets of the erased concepts using the appropriate csv file. For example, to generate the Nudity dataset:
@@ -49,14 +49,14 @@ export SAVE_PATH=../datasets
 mkdir -p $SAVE_PATH
 python generate_object_dataset.py --concept ${CONCEPT} --save_path ${SAVE_PATH}
 ```
-4. Download the [style classifier](https://drive.google.com/file/d/1me_MOrXip1Xa-XaUrPZZY7i49pgFe1po/view) for detection of the Van Gogh concept. Add an environemnt variable for the classifier:
+4. Download the [style classifier](https://drive.google.com/file/d/1me_MOrXip1Xa-XaUrPZZY7i49pgFe1po/view) for detection of the Van Gogh concept. Add an environmen variable for the classifier:
 ```shell
 export STYLE_CLASSIFIER_DIR=/path/to/cls/dir
 ```
 
 ## Setup Environment
 ### Conda + pip
-create an environemnt using the supplied requirements.txt file:
+create an environment using the supplied requirements.txt file:
 ```shell
 git clone https://github.com/matanr/Memories_of_Forgotten_Concepts
 cd Memories_of_Forgotten_Concepts/src
@@ -131,5 +131,5 @@ python many_memories_of_an_ablated_image.py
 }
 ```
 
-# Acknowlegments
+# Acknowledgments
 This repository is built upon and incorporates code from [Diffusion-MU-Attack](https://github.com/OPTML-Group/Diffusion-MU-Attack), [AdvUnlearn](https://github.com/OPTML-Group/AdvUnlearn) and [Renoise](https://github.com/garibida/ReNoise-Inversion).
