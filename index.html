@@ -244,47 +244,49 @@
       <h2 class="title">BibTeX</h2>
     </div>
     <div class="columns is-centered has-text-centered">
-      <div class="column is-four-fifths bibtex-div">
-<pre><code id="bibtex-code" class="lang-bib">@misc{rusanovsky2024memoriesforgottenconcepts,
-  <span class="hljs-attr">   title={Memories of Forgotten Concepts</span>},
-  <span class="hljs-attr">   author</span>={Matan Rusanovsky <span class="hljs-literal">and</span> Shimon Malnick <span class="hljs-literal">and</span> Amir Jevnisek <span class="hljs-literal">and</span> Ohad Fried <span class="hljs-literal">and</span> Shai Avidan},
-  <span class="hljs-attr">   year={2024},</span>
-  <span class="hljs-attr">   eprint={2412.00782},</span>
-  <span class="hljs-attr">   archivePrefix={arXiv},</span>
-  <span class="hljs-attr">   primaryClass={cs.CV},</span>
-  <span class="hljs-attr">   url={https://arxiv.org/abs/2412.00782},</span>
-  <span>}</span>
-</code>
-</pre>
-        <button
-              class="copy-btn"
-              onclick="copyBibtex()"
-              aria-label="Copy to clipboard"
-              style="
-              position: absolute;
-              top: 55px;
-              right: 95px;
-              background: none;
-              border: none;
-              cursor: default;
-              font-size: 2em;
-              color: dimgray;
-            ">
-          &#x2398; <!-- Unicode for a clipboard-like symbol -->
-        </button>
-        <!-- Feedback message -->
-        <span id="copied-feedback"
-              style="
-              position: absolute;
-              top: 65px;
-              right: 125px;
-              font-size: 0.9em;
-              color: dimgray;
-              display: none;
-            ">
-            Copied
-          </span>
+      <div class="column is-four-fifths">
+        <div style="position:relative; display:inline-block;">
 
+    <pre style="margin:0">
+<code id="bibtex-code" class="lang-bib">@InProceedings{Rusanovsky_2025_CVPR,
+  author    = {Rusanovsky, Matan and Malnick, Shimon and Jevnisek, Amir and
+               Fried, Ohad and Avidan, Shai},
+  title     = {Memories of Forgotten Concepts},
+  booktitle = {Proceedings of the Computer Vision and Pattern Recognition Conference (CVPR)},
+  month     = {June},
+  year      = {2024},
+  pages     = {2966-2975},
+}</code>
+    </pre>
+
+          <button
+                  onclick="copyBibtex()"
+                  aria-label="Copy BibTeX to clipboard"
+                  style="
+        position:absolute;
+        top:0.5rem;
+        right:0.5rem;
+        background:none;
+        border:none;
+        font-size:1.75rem;
+        color:dimgray;
+        line-height:1;
+        cursor:pointer;">
+            &#x2398;
+          </button>
+
+          <span id="copied-feedback"
+                style="
+            position:absolute;
+            top:0.65rem;
+            right:3.2rem;
+            font-size:0.9em;
+            color:dimgray;
+            display:none;">
+      Copied
+    </span>
+
+        </div>
       </div>
   </div>
   </div>
