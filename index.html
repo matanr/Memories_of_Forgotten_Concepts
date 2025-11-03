@@ -259,33 +259,61 @@
       <div class="column is-four-fifths">
         <div style="position:relative; display:inline-block;">
 
-    <pre style="margin:0">
-<code id="bibtex-code" class="lang-bib">@InProceedings{Rusanovsky_2025_CVPR,
-  author    = {Rusanovsky, Matan and Malnick, Shimon and Jevnisek, Amir and
-               Fried, Ohad and Avidan, Shai},
-  title     = {Memories of Forgotten Concepts},
-  booktitle = {Proceedings of the Computer Vision and Pattern Recognition Conference (CVPR)},
-  month     = {June},
-  year      = {2024},
-  pages     = {2966-2975},
-}</code>
-    </pre>
+          <!-- BibTeX Card -->
+          <div style="margin-top:16px;border:1px solid rgba(0,0,0,0.12);border-radius:12px;overflow:hidden;background:rgba(0,0,0,0.035);">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 12px;background:rgba(0,0,0,0.05);">
+              <div style="font:600 14px/1.2 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif;letter-spacing:.2px;"></div>
+              <button id="copy-bib-btn"
+                      style="cursor:pointer;border:1px solid rgba(0,0,0,0.15);background:#fff;border-radius:8px;padding:6px 10px;font:600 12px/1 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif;box-shadow:0 1px 1px rgba(0,0,0,0.05);">
+                Copy
+              </button>
+            </div>
 
-          <button
-                  onclick="copyBibtex()"
-                  aria-label="Copy BibTeX to clipboard"
-                  style="
-        position:absolute;
-        top:0.5rem;
-        right:0.5rem;
-        background:none;
-        border:none;
-        font-size:1.75rem;
-        color:dimgray;
-        line-height:1;
-        cursor:pointer;">
-            &#x2398;
-          </button>
+
+
+    <pre style="margin:0">
+<code id="bibtex-code" class="lang-bib">
+  @inproceedings{rusanovsky2025memories,
+  title={Memories of forgotten concepts},
+  author={Rusanovsky, Matan and Malnick, Shimon and Jevnisek, Amir and Fried, Ohad and Avidan, Shai},
+  booktitle={Proceedings of the Computer Vision and Pattern Recognition Conference},
+  pages={2966--2975},
+  year={2025}
+}
+</code>
+    </pre>
+          </div>
+
+          <script>
+            (function () {
+              const btn = document.getElementById('copy-bib-btn');
+              const codeEl = document.getElementById('bibtex-code');
+              if (!btn || !codeEl) return;
+
+              btn.addEventListener('click', async () => {
+                const txt = codeEl.textContent.trim();
+                try {
+                  await navigator.clipboard.writeText(txt);
+                  const old = btn.textContent;
+                  btn.textContent = 'Copied!';
+                  setTimeout(() => (btn.textContent = old), 1200);
+                } catch (e) {
+                  // Fallback
+                  const ta = document.createElement('textarea');
+                  ta.value = txt;
+                  ta.style.position = 'fixed';
+                  ta.style.left = '-9999px';
+                  document.body.appendChild(ta);
+                  ta.select();
+                  document.execCommand('copy');
+                  document.body.removeChild(ta);
+                  const old = btn.textContent;
+                  btn.textContent = 'Copied!';
+                  setTimeout(() => (btn.textContent = old), 1200);
+                }
+              });
+            })();
+          </script>
 
           <span id="copied-feedback"
                 style="
